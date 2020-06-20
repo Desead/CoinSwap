@@ -1,0 +1,34 @@
+<ul class="nav nav-pills justify-content-center bg-dark">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'orders' %}">Заявки</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'change' %}">Обмен</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'paysystem' %}">Платёжные системы</a>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+           aria-expanded="false">Парсеры</a>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="{% url 'cbrf' %}">ЦБРФ</a>
+            <a class="dropdown-item" href="{% url 'binance' %}">Binance</a>
+            <a class="dropdown-item" href="{% url 'rates' %}">Все курсы</a>
+            <a class="dropdown-item" href="{% url 'best' %}">Bestchange</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Forex</a>
+        </div>
+    </li>
+        <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+           aria-expanded="false">Настройки</a>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="{% url 'begin' %}">Первый старт</a>
+        </div>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'info' %}">Инфо</a>
+    </li>
+
+</ul>

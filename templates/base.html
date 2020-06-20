@@ -1,0 +1,37 @@
+{% load static %}
+
+<!doctype html>
+<html lang="ru">
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap&subset=cyrillic" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+<title>Меняй смело</title>
+
+<body>
+<div class="container">
+    <header>
+        <div class="header-logo">
+            <a href="/"><img src="{% static 'img/logo.png' %}" alt="logo" height="60" width="60"></a>
+        </div>
+        <div class="header-nav">
+            {% block header %}{% endblock %}
+        </div>
+        <div class="header-nav-toggle">
+            <span class="toggle-item">
+            </span>
+        </div>
+    </header>
+    <main role="main">
+        <div class="banner">
+            {% block warning %}{% endblock %}
+        </div>
+        <section class="change">
+            {% block content %}{% endblock %}
+        </section>
+    </main>
+    {% include 'include/footer.html' %}
+</div>
+</body>
+</html>

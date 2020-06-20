@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block header %}
+    <a class="nav-link" href="/">Главная</a>
+    <a class="nav-link" href="/rules/">Правила</a>
+    <a class="nav-link" href="/faq/">Вопросы</a>
+    <a class="nav-link" href="/contacts/">Контакты</a>
+    <a class="nav-link" href="/lk/">Вход</a>
+{% endblock %}
+
+{% block warning %}
+    Проверьте данные заявки и подтвердите их корректность. <br>Стоит обратить внимание на отправляемую и получаему
+    сумму. На
+    этой странице, мы замораживаем курс
+    {% if type == 'crypto' %}
+        на {{ type_freeze }} минут для попадания заявки в сеть и на {{ type_freeze_confirm }} минут для получения 1
+        подтверждения
+    {% else %}
+        на {{ type_freeze }} минут
+    {% endif %}
+    Если за период заморозки курса заявка не будет оплачена, она автоматически отменится.
+    Если оплата по данной заявке всё же пройдёт, то обработана она будет только после обращения, в ручном режиме. Так
+    же,
+    для данной заявки, сервис оставляет за собой право произвести обмен по текущему курсу на момент её обработки.
+{% endblock %}
+
+{% block content %}
+    <div class="outram">
+        <div class="color-confirm">Подтверждение</div>
+        <div class="cnf-block">
+            <div class="cnf-left wd">
+                <div class="orderID">
+                    ID заявки: {{ num }}
+                </div>
+                <div class="orderDate" id="cnf-date" title="Используется время UTC">
+                    Время оформления: {{ date_create }}
+                </div>
+                {#                <div class="orderTime" id="cnf-time">#}
+                {#                    Время оформления: 18:34:20#}
+                {#                </div>#}
+                <div class="orderStatus" id="cnf-status">
+                    Статус: {{ status }}
+                </div>
+                {#                <div class="orderRate" id="cnf-rate">#}
+                {#                    Курс обмена: 1 BTC : {{ nmmail }}#}
+                {#                </div>#}
+                {#                <div class="orderInfo" id="cnf-freeze">#}
+                {#                    Период заморозки курса:#}
+                {#                </div>#}
+            </div>
+            <div class="cnf-right wd">
+                <div class="psFrom" id="cnf-from">
+                    Отдаёте: {{ left }}
+                </div>
+                <div class="psSum">
+                    Сумма: {{ sum_from }}
+                </div>
+                <div class="psAccount nodisplay" id="wallet_client_from">
+                    С кошелька: {{ wallet_client_from }}
+                </div>
+                <div class="psTo" id="cnf-to">
+                    Получаете: {{ right }}
+                </div>
+                <div class="psSum">
+                    Сумма: {{ sum_to }}
+                </div>
+                <div class="psAccount">
+                    На кошелёк: {{ wallet_client_to }}
+                </div>
+            </div>
+        </div>
+
+        <div class="wallet-manual">
+{#            {{ manual }}#}
+            {{ text }}
+        </div>
+
+        <div class="cnsl" id="cnf-cancel">
+            До отмены заявки осталось:
+        </div>
+        <div class="sol">
+            <form action="check/" class="solbtn">
+                <input type="submit" value="Отменить" name="solution" class="sbtn no" id="nobtn">
+                <input type="submit" value="Я оплатил" name="solution" class="sbtn ok nodisplay" id="okbtn">
+            </form>
+        </div>
+    </div>
+
+    <script src="{% static 'js/confirm.js' %}"></script>
+{% endblock %}
+

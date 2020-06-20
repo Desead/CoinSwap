@@ -1,0 +1,22 @@
+.seldiv{
+    background-color: #222222;
+    box-shadow: inset #111 0 0 2px 1px;
+    border: 1px solid #363636;
+}
+.hiddiv{
+    opacity: 0;
+    transition: opacity 0.2s linear;
+}
+.nodisplay{
+    display: none;
+}
+.warning{
+    /*border: 2px solid red;*/
+    color: red;
+}
+
+/*когда элемент нельзя выделить*/
+.selectNone{
+    cursor: not-allowed;
+    opacity: 0.3;
+}

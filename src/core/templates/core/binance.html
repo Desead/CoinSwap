@@ -1,0 +1,16 @@
+{% extends 'core/base-admin.html' %}
+{% block content %}
+
+    {% for i in binance %}
+        <p>
+            {{ i.name }}
+            {{ i.nominal_1 }}
+            {{ i.nominal_2 }}
+            {{ i.base }}
+            {{ i.profit }}
+            {{ i.dt }}
+            {{ i.source }}
+        </p>
+    {% endfor %}
+
+{% endblock %}

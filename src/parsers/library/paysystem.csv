@@ -1,0 +1,195 @@
+Код валюты,Описание,Тип,Базовая валюта
+BTC,Bitcoin (BTC),crypto,BTC
+BCH,Bitcoin Cash (BCH),crypto,BCH
+BSV,Bitcoin SV (BSV),crypto,BSV
+BTG,Bitcoin Gold (BTG),crypto,BTG
+ETH,Ethereum (ETH),crypto,ETH
+ETC,Ether Classic (ETC),crypto,ETC
+LTC,Litecoin (LTC),crypto,LTC
+XRP,Ripple (XRP),crypto,XRP
+XMR,Monero (XMR),crypto,XMR
+DOGE,Dogecoin (DOGE),crypto,DOGE
+PPC,Peercoin (PPC),crypto,PPC
+DASH,Dash (DASH),crypto,DASH
+ZEC,Zcash (ZEC),crypto,ZEC
+USDT,Tether Omni (USDT),crypto,USDT
+USDTERC,Tether ERC20 (USDT),crypto,USDTERC
+USDC,USD Coin (USDC),crypto,USDC
+TUSD,TrueUSD (TUSD),crypto,TUSD
+PAX,Paxos (PAX),crypto,PAX
+XEM,NEM (XEM),crypto,XEM
+REP,Augur (REP),crypto,REP
+NEO,NEO (NEO),crypto,NEO
+EOS,EOS (EOS),crypto,EOS
+IOTA,IOTA (MIOTA),crypto,IOTA
+LSK,Lisk (LSK),crypto,LSK
+ADA,Cardano (ADA),crypto,ADA
+XLM,Stellar (XLM),crypto,XLM
+BCN,Bytecoin (BCN),crypto,BCN
+TRX,TRON (TRX),crypto,TRX
+WAVES,Waves (WAVES),crypto,WAVES
+OMG,OmiseGO (OMG),crypto,OMG
+XVG,Verge (XVG),crypto,XVG
+ZRX,0x (ZRX),crypto,ZRX
+BNB,Binance Coin (BNB),crypto,BNB
+ICX,ICON (ICX),crypto,ICX
+KMD,Komodo (KMD),crypto,KMD
+BTT,BitTorrent (BTT),crypto,BTT
+BAT,BAT (BAT),crypto,BAT
+ONT,Ontology (ONT),crypto,ONT
+QTUM,Qtum (QTUM),crypto,QTUM
+QWRUB,QIWI RUB,eps,RUB
+QWUSD,QIWI USD,eps,USD
+QWEUR,QIWI EUR,eps,EUR
+QWKZT,QIWI KZT,eps,KZT
+YAMRUB,Яндекс.Деньги,eps,RUB
+WMZ,WMZ,eps,USD
+WMR,WMR,eps,RUB
+WME,WME,eps,EUR
+WMU,WMU,eps,UAH
+WMB,WMB,eps,BYN
+WMK,WMK,eps,KZT
+WMG,WMG,eps,GOLD
+WMX,WMX,eps,BTC
+PMRUSD,Paymer USD,eps,USD
+PMRRUB,Paymer RUB,eps,RUB
+PMUSD,Perfect Money USD,eps,USD
+PMEUR,Perfect Money EUR,eps,EUR
+PMBTC,Perfect Money BTC,eps,BTC
+PMVUSD,PM e-Voucher USD,eps,USD
+PPUSD,PayPal USD,eps,USD
+PPRUB,PayPal RUB,eps,RUB
+PPEUR,PayPal EUR,eps,EUR
+PPGBP,PayPal GBP,eps,GBP
+ADVCUSD,Advanced Cash USD,eps,USD
+ADVCRUB,Advanced Cash RUB,eps,RUB
+ADVCEUR,Advanced Cash EUR,eps,EUR
+ADVCUAH,Advanced Cash UAH,eps,UAH
+ADVCKZT,Advanced Cash KZT,eps,KZT
+PRUSD,Payeer USD,eps,USD
+PRRUB,Payeer RUB,eps,RUB
+PREUR,Payeer EUR,eps,EUR
+SKLUSD,Skrill USD,eps,USD
+SKLEUR,Skrill EUR,eps,EUR
+SKLGBP,Skrill GBP,eps,GBP
+IDAMD,Idram,eps,AMD
+PAXUMUSD,Paxum,eps,USD
+CPTSUSD,Capitalist USD,eps,USD
+CPTSRUB,Capitalist RUB,eps,RUB
+NTLRUSD,Neteller USD,eps,USD
+NTLREUR,Neteller EUR,eps,EUR
+PSRUSD,PaySera USD,eps,USD
+PSREUR,PaySera EUR,eps,EUR
+PSCEUR,PaySafeCard,eps,EUR
+STPUSD,SolidTrust Pay,eps,EUR
+EPMUSD,ePayments USD,eps,USD
+EPMEUR,ePayments EUR,eps,EUR
+EPMRUB,ePayments RUB,eps,RUB
+NIXUSD,NixMoney USD,eps,USD
+NIXEUR,NixMoney EUR,eps,EUR
+GMUAH,GlobalMoney,eps,UAH
+VLSPUSD,VelesPay,eps,USD
+EPAYUSD,Epay USD,eps,USD
+EPAYEUR,Epay EUR,eps,EUR
+ALPCNY,Alipay,eps,CNY
+EPSVUSD,ePayService,eps,USD
+MWRUB,Счет телефона RUB,eps,RUB
+MWUAH,Счет телефона UAH,eps,UAH
+TRDUSD,Криптобиржи USD,eps,USD
+TRDEUR,Криптобиржи EUR,eps,EUR
+EXMUSD,Exmo USD,code,USD
+EXMRUB,Exmo RUB,code,RUB
+EXMEUR,Exmo EUR,code,EUR
+EXMUAH,Exmo UAH,code,UAH
+EXMBTC,Exmo BTC,code,BTC
+LVCNUSD,LiveCoin USD,code,USD
+LVCNRUB,LiveCoin RUB,code,RUB
+CRXUSD,Cryptex,code,USD
+KUNAUAH,Kuna,code,UAH
+SBERRUB,Сбербанк,bank,RUB
+ACRUB,Альфа-Банк,bank,RUB
+ACCUSD,Альфа cash-in USD,bank,USD
+ACCRUB,Альфа cash-in RUB,bank,RUB
+TCSBRUB,Тинькофф,bank,RUB
+TCSBCRUB,ТКС cash-in,bank,RUB
+TBRUB,ВТБ,bank,RUB
+RUSSTRUB,Русский Стандарт,bank,RUB
+AVBRUB,Авангард,bank,RUB
+PSBRUB,Промсвязьбанк,bank,RUB
+GPBRUB,Газпромбанк,bank,RUB
+KUKRUB,Кукуруза,bank,RUB
+RFBRUB,Райффайзен,bank,RUB
+RNKBRUB,РНКБ,bank,RUB
+OPNBRUB,Открытие,bank,RUB
+RKTBRUB,Рокетбанк,bank,RUB
+POSTBRUB,Почта Банк,bank,RUB
+RSHBRUB,Россельхозбанк,bank,RUB
+MTSBRUB,МТС Банк,bank,RUB
+P24USD,Приват 24 USD,bank,USD
+P24UAH,Приват 24 UAH,bank,UAH
+RFBUAH,Райффайзен UAH,bank,UAH
+OSDBUAH,Ощадбанк,bank,UAH
+USBUAH,УкрСиббанк,bank,UAH
+PMBBUAH,ПУМБ,bank,UAH
+MONOBUAH,Монобанк,bank,UAH
+ACUAH,Альфа-Банк UAH,bank,UAH
+BLRBBYN,Беларусбанк,bank,BYN
+KKBKZT,Казкоммерцбанк,bank,KZT
+HLKBKZT,HalykBank,bank,KZT
+SBERKZT,Сбербанк KZT,bank,KZT
+FRTBKZT,ForteBank,bank,KZT
+KSPBKZT,Kaspi Bank,bank,KZT
+CARDUSD,Visa/MasterCard USD,bank,USD
+CARDRUB,Visa/MasterCard RUB,bank,RUB
+CARDEUR,Visa/MasterCard EUR,bank,EUR
+CARDUAH,Visa/MasterCard UAH,bank,UAH
+CARDBYN,Visa/MasterCard BYN,bank,BYN
+CARDKZT,Visa/MasterCard KZT,bank,KZT
+CARDSEK,Visa/MasterCard SEK,bank,SEK
+CARDPLN,Visa/MasterCard PLN,bank,PLN
+CARDMDL,Visa/MasterCard MDL,bank,MDL
+CARDAMD,Visa/MasterCard AMD,bank,AMD
+CARDGBP,Visa/MasterCard GBP,bank,GBP
+CARDCNY,Visa/MasterCard CNY,bank,CNY
+CARDTRY,Visa/MasterCard TRY,bank,TRY
+AMEXUSD,Карта AmEx,bank,USD
+MIRCRUB,Карта Мир,bank,RUB
+UPCNY,Карта UnionPay,bank,CNY
+UZCUZS,Карта UZCARD,bank,UZC
+WIREUSD,Любой банк USD,bank,USD
+WIRERUB,Любой банк RUB,bank,RUB
+WIREEUR,Любой банк EUR,bank,EUR
+WIREUAH,Любой банк UAH,bank,UAH
+WIREBYN,Любой банк BYN,bank,BYN
+WIREKZT,Любой банк KZT,bank,KZT
+WIREGBP,Любой банк GBP,bank,GBP
+WIRECNY,Любой банк CNY,bank,CNY
+WIRETRY,Любой банк TRY,bank,TRY
+WIREPLN,Любой банк PLN,bank,PLN
+WIRETHB,Любой банк THB,bank,THB
+WIREINR,Любой банк INR,bank,INR
+WIRENGN,Любой банк NGN,bank,NGN
+SEPAEUR,Sepa EUR,bank,EUR
+ERIPBYN,ЕРИП Расчет,bank,RUB
+STLMRUB,Счет ИП или ООО,bank,RUB
+REVBUSD,Revolut USD,bank,USD
+REVBEUR,Revolut EUR,bank,EUR
+WUUSD,WU USD,moneysend,USD
+WUEUR,WU EUR,moneysend,EUR
+WURUB,WU RUB,moneysend,RUB
+MGUSD,MoneyGram USD,moneysend,USD
+MGEUR,MoneyGram EUR,moneysend,EUR
+CNTUSD,Contact USD,moneysend,USD
+CNTRUB,Contact RUB,moneysend,RUB
+GCMTUSD,Золотая Корона USD,moneysend,USD
+GCMTRUB,Золотая Корона RUB,moneysend,RUB
+USTMUSD,Юнистрим USD,moneysend,USD
+USTMRUB,Юнистрим RUB,moneysend,RUB
+RMTFUSD,Ria USD,moneysend,USD
+RMTFEUR,Ria EUR,moneysend,EUR
+CASHUSD,Наличные USD,cash,USD
+CASHRUB,Наличные RUB,cash,RUB
+CASHEUR,Наличные EUR,cash,EUR
+CASHUAH,Наличные UAH,cash,UAH
+CASHBYN,Наличные BYN,cash,BYN
+CASHKZT,Наличные KZT,cash,KZT

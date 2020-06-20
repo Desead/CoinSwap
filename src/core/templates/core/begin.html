@@ -1,0 +1,34 @@
+{% extends 'core/base-admin.html' %}
+{% block title %}
+    Настройки
+{% endblock %}
+{% block content %}
+    <br>
+    <p>
+        Используемые валюты:<b>
+        {% for i in usedmoney %}
+            {{ i }}
+        {% endfor %} </b>
+    </p>
+
+    <form action="#">
+        <input type="text" name="addmoney" id="add" placeholder="usd, eur, rub, btc, ltc, eth">
+        <input type="submit" value="Добавить валюты">
+    </form>
+    <form action="#">
+        <input type="text" name="delmoney" id="add" placeholder="* - удалить всё">
+        <input type="submit" value="Удалить валюты">
+    </form>
+    <br>
+    <hr>
+    <form action="#">
+        <input type="submit" value="Добавить типы платёжных систем" name="addtype">
+    </form>
+    <form action="#">
+        <input type="submit" value="Заполнить платёжные системы" name="addpay">
+    </form>
+    <form action="#">
+        <input type="submit" value="Добавить случайные обмены" name="addchange">
+    </form>
+
+{% endblock %}

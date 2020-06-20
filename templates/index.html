@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block header %}
+    <a class="nav-link active" href="/">Главная</a>
+    <a class="nav-link" href="/rules/">Правила</a>
+    <a class="nav-link" href="/faq/">Вопросы</a>
+    <a class="nav-link" href="/contacts/">Контакты</a>
+    <a class="nav-link" href="/lk/">Вход</a>
+{% endblock %}
+
+{% block warning %}
+    Безопасный обмен <br>
+    Обменник полностью автоматический, работает круглосуточно. Информацию о заявке отправляется на указанную
+    электронную почту. Сообщать оператору об оплате не нужно. Если считаете, что заявка зависла ,попробуйте
+    просто обновить страницу - нажмите F5
+{% endblock %}
+
+{% block content %}
+
+    <div class="left-change">
+        <div class="change-up">
+            Откуда
+        </div>
+        <div class="change-dn">
+        </div>
+    </div>
+    <div class="right-change">
+        <div class="change-up">
+            Куда
+        </div>
+        <div class="change-dn"></div>
+    </div>
+    <div class="swap block">
+        <div class="change-up">
+            Новости
+        </div>
+    </div>
+
+    {#    блок новостей. показыаем пока не выбрано 2 платёжки#}
+    <template id="template_news_block">
+        <div class="change-dn news">
+            ЯКУТСК, 2 мая — РИА Новости. Коронавирусом заразились более трех тысяч человек, работающих на
+            Чаяндинском
+            месторождении в Якутии, сообщила зампред правительства региона Ольга Балабкина в Telegram.
+            Всего на месторождении трудятся более десяти тысяч человек из 79 подрядных предприятий "Газпрома". В
+            течение
+            недели у всех взяли тесты на коронавирус. МЧС доставил на Чаянду аэромобильный госпиталь для лечения
+            больных. Здоровых вахтовых работников из месторождения будут вывозить рейсами авиакомпании "Якутия".
+        </div>
+        <div class="change-up">
+            Последние обмены
+        </div>
+        <div class="change-dn news">
+
+        </div>
+        <div class="change-up">
+            Наши партнёры
+        </div>
+        <div class="change-dn news">
+        </div>
+
+    </template>
+
+    {#элемент платёжки#}
+    <template id="template_elem_change">
+        <div class="elem toside">
+            <div class="left">
+                <img src="" width="30" height="40" alt="">
+            </div>
+            <div class="right"></div>
+        </div>
+    </template>
+
+    {#блок обмена#}
+    <template id="template_change">
+        <div class="swap money">
+            <div class="change-up" id="chrates">
+                Обмен
+            </div>
+            <div class="change-dn">
+                <form action="confirm/" class="swap-box" method="post" id="newAction">
+                    {% csrf_token %}
+                    <div class="from">
+                        <div class="line1">
+                            Отдаю
+                        </div>
+                        <div class="line2">
+                            <div class="limit">
+                                <p class="minmaxfrom" id="minfrom">мин: 100</p>
+                                <p class="minmaxfrom" id="maxfrom">макс: 49000</p>
+                                {#                                <p class="res">резерв: 2599879</p>#}
+                            </div>
+                            <div class="data"
+                                 title="Сумма которая должна прийти на счёт обменника. Если в платёжной системе есть комиссия за перевод, то она оплачивается клиентом">
+                                {#                                                                поставить округление до 8 знака#}
+                                <input type="text" class="swap-side" name="sum_from" id="sum_from" placeholder=" сумма"
+                                       maxlength="20" required value="">
+                            </div>
+                            <div class="lock"
+                                 title="Иногда, из-за округления, возможны минимальные неточности. Эта опция позволит зафиксировать отдаваемую или получаемую сумму">
+                                <label class="rad">
+                                    <input type="radio" name="sumlock" value="sumfromlock" checked/>
+                                    <i></i>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="line3">
+                            <div class="limit">
+                            </div>
+                            <div class="data">
+                                <input type="text" class="swap-side" name="wallet_client_from" id="wallet_client_from"
+                                       placeholder="номер кошелька" maxlength="16" required value="79347654321">
+                            </div>
+                            <div class="lock">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="to">
+                        <div class="line1">
+                            Получаю
+                        </div>
+                        <div class="line2">
+                            <div class="limit">
+                                <p class="minmaxto" id="minto">мин: 100</p>
+                                <p class="minmaxto" id="maxto">макс: 49000</p>
+                                <p class="res" id="reservto">резерв: 609000</p>
+                            </div>
+                            <div class="data">
+                                <input type="text" class="swap-side" name="sum_to" id="sum_to" placeholder=" сумма"
+                                       maxlength="20" required value="">
+                            </div>
+                            <div class="lock"
+                                 title="Иногда, из-за округления, возможны минимальные неточности. Эта опция позволит зафиксировать отдаваемую или получаемую сумму">
+                                <label class="rad">
+                                    <input type="radio" name="sumlock" value="sumtolock"/>
+                                    <i></i>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="line4">
+                            <div class="limit">
+                            </div>
+                            <div class="data">
+                                <input type="text" class="swap-side" name="wallet_client_to" id="wallet_client_to"
+                                       maxlength="50" placeholder="кошелёк куда отправить" required
+                                       value="1234898709873236">
+                            </div>
+                            <div class="lock">
+                            </div>
+                        </div>
+                        <div class="line5" id="walletadd">
+                            <div class="limit">
+                            </div>
+                            <div class="data">
+                                <input type="text" class="swap-side" id="wallet_add" name="wallet_add"
+                                       placeholder="доп. поле для крипты" maxlength="50" required value="">
+                            </div>
+                            <div class="lock">
+                            </div>
+                        </div>
+                        <div class="line6" id="comiss">
+                            <div class="limit">
+                            </div>
+                            <div class="data">
+                                <input type="text" class="swap-side" name="fee_client" id="fee_client"
+                                       placeholder="введите желаемую комиссию" maxlength="16">
+                            </div>
+                            <div class="lock sideanchor" id="myfee" title="lldd">&nbsp;?
+                            </div>
+                        </div>
+                        <div class="line7">
+                            <div class="limit">
+                            </div>
+                            <div class="data">
+                                <input type="email" class="swap-side" name="nmmail" id="mail"
+                                       placeholder="электронная почта" maxlength="50" required value="">
+                            </div>
+                            <div class="lock mailfree"
+                                 title="Нет почты? Введите случайную. Но в этом случае уменьшаются возможности сервиса по поиску и отслеживанию вашей заявки если с ней что-то пошло не так">
+                                &#9993;
+                            </div>
+                        </div>
+                        <div class="line8">
+                            <div class="limit">
+                            </div>
+                            <div class="data">
+                                <input type="text" class="swap-side" name="nmphone" id="phone"
+                                       placeholder="номер телефона" maxlength="16" required value="87659876451">
+                            </div>
+                            <div class="lock">
+                                <div class="triangle-left nodisplay"
+                                     title="Номер совпадает с Qiwi кошельком">
+                                    &#9742;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="button" class="swap-side btn" value="Перейти к оплате" name="checkinput"
+                           id="newFormAction">
+                    <div class="rules">
+                        <p class="rules">нажимая кнопку - вы соглашаетесь с правилами сервиса</p>
+                    </div>
+                    <input type="hidden" name="test_num" value="" id="test_num">
+                </form>
+            </div>
+        </div>
+    </template>
+
+    {#    <script src="{% static 'js/check.js' %}"></script>#}
+    <script src="{% static 'js/func2.js' %}"></script>
+    <script src="{% static 'js/main2.js' %}"></script>
+{% endblock %}

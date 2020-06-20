@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block header %}
+    <a class="nav-link active" href="/">Главная</a>
+    <a class="nav-link" href="/rules/">Правила</a>
+    <a class="nav-link" href="/faq/">Вопросы</a>
+    <a class="nav-link" href="/contacts/">Контакты</a>
+    <a class="nav-link" href="/lk/">Вход</a>
+{% endblock %}
+
+{% block warning %}
+    Безопасный обмен <br>
+    Обменник полностью автоматический, работает круглосуточно. Информацию о заявке отправляется на указанную
+    электронную почту. Сообщать оператору об оплате не нужно. Если считаете, что заявка зависла ,попробуйте
+    просто обновить страницу - нажмите F5
+{% endblock %}
+
+{% block content %}
+
+{{ error }}
+{% endblock %}

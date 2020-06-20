@@ -1,0 +1,11 @@
+* {
+    outline: none;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+    list-style-type: none;
+    text-decoration: none;
+}
+
+body {
+    background-color: #f1f0eb;
+}

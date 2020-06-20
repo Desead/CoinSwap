@@ -1,0 +1,55 @@
+.outram{
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.22);
+    max-width: 900px;
+}
+.wallet-manual{
+    text-align: justify;
+    padding: 15px;
+    box-shadow: inset 0 0 10px 0 #111;
+    background-color: #222;
+}
+.wd {
+    min-width: 400px;
+}
+.color-confirm{
+    margin-top: 30px;
+    background-color: #444;
+    text-align: center;
+    padding: 15px;
+}
+.cnf-block{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.cnf-left>*, .cnf-right>*{
+    text-align: left;
+    padding: 15px;
+}
+.solbtn{
+    display: flex;
+    justify-content: center;
+}
+.sbtn{
+    cursor: pointer;
+    padding: 15px 25px;
+    margin: 20px;
+    border: 1px solid #222;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.22);
+    font-weight: bold;
+}
+.ok{
+    background-color: darkblue;
+}
+.no{
+    background-color: firebrick;
+}
+.cnsl{
+    text-align: center;
+    background-color: #444;
+    padding: 15px;
+    color: #ff8585;
+    font-weight: bold;
+}
