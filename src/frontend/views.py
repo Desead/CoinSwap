@@ -8,13 +8,6 @@ from src.core.models import PaySystemModel, SiteModel
 from src.frontend.library import addfunc
 
 
-def fotest(request):
-    context = {}
-    form = HTMLform()
-    context = {'form': form}
-    return render(request, 'testforms.html', context)
-
-
 class StartView(View):
     context = {}
 
@@ -131,7 +124,6 @@ class ConfirmView(View):
                 return render(request, 'error.html', {'error': 'add wallet = " "'})
             if len(wallet_add) > 50:
                 return render(request, 'error.html', {'error': 'add wallet  very long'})
-
 
         text = ChangeModel.objects.filter(active=True, pay_from__code=left, pay_to__code=right, pk=test_num)
         if text.count() != 1:
