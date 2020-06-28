@@ -1,0 +1,11 @@
+.idea
+venv
+bsinfo
+
+coinswap.conf
+gunicorn.conf.py
+prod_settings.py
+
+db.sqlite3
+
+**/migrations/0*.py

@@ -7,8 +7,8 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('', StartView.as_view()),
     path('rules/', TemplateView.as_view(template_name='rules.html')),
-    path('faq/', TemplateView.as_view(template_name='faq.html', extra_context={'test': 'даже переменную передал'})),
-    path('contacts/', TemplateView.as_view(template_name='contacts.html')),
+    # path('faq/', TemplateView.as_view(template_name='faq.html', extra_context={'test': 'даже переменную передал'})),
+    path('contacts/', TemplateView.as_view(template_name='contacts.html', extra_context={'mail': 'info@bitlab.work'})),
     path('lk/', TemplateView.as_view(template_name='lk.html')),
     re_path(r'(?P<left>[A-Z]{3,12})/(?P<right>[A-Z]{3,12})/(?P<idfromsite>\w{36})/', ConfirmView.as_view()),
 ]

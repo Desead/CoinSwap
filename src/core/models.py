@@ -79,6 +79,7 @@ class SiteModel(models.Model):
     url = models.URLField(unique=True, verbose_name='Адрес сайта', default='http://127.0.0.1:8000/')
     working = models.CharField(max_length=30, default='10:30 22:00', verbose_name='Время работы')
     mail = models.EmailField(default='info@change.ru', verbose_name='Почта для связи', blank=True)
+    news = models.TextField(default='', blank=True, verbose_name='Новость на главную')
     description = models.CharField(max_length=255, blank=True, verbose_name='Комментарий. Для себя')
 
     def __str__(self):
