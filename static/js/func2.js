@@ -312,7 +312,7 @@ function rates(side = 'test') {
                     if (temp > prev) {
                         document.querySelector('#test_num').value = i.test_num
                         prev = temp;
-                    }
+                    } else temp = prev;
                 }
                 // правильно округляем
                 let rnd = 2;
@@ -351,7 +351,7 @@ function rates(side = 'test') {
                     if (temp < prev) {
                         prev = temp;
                         document.querySelector('#test_num').value = i.test_num
-                    }
+                    }else temp = prev;
                 }
                 let rnd = 2;
                 if (pstype[left] === 'crypto') rnd = 8

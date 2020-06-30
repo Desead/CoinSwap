@@ -22,7 +22,7 @@ class ChangeModelAdmin(admin.ModelAdmin):
             kwargs["queryset"] = PaySystemModel.objects.filter(active=True)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
-    list_display = (
+    list_display = ('pk',
         'site', 'pay_from', 'pay_from_min', 'pay_from_max', 'pay_to', 'pay_to_min', 'pay_to_max', 'fee', 'fee_fix',
         'active', 'dinamic_fee', 'manual')
     list_editable = (
@@ -30,3 +30,4 @@ class ChangeModelAdmin(admin.ModelAdmin):
     list_display_links = ('pay_from', 'pay_to')
     list_filter = ('active', 'dinamic_fee', 'manual', 'site')
     save_as = True
+    save_on_top = True

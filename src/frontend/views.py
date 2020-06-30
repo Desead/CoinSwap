@@ -40,31 +40,45 @@ class ConfirmView(View):
     116 - что то не так с дополнительным полем для крипты
     """
 
-    # если ид не найдено то такая заявка не существует
+    # todo сраницу order_not_found сделать более информативной ?
+    context = {}
+
+    # берём данные заявки из бд и заполняем их в словарь для вывода
+    def get_order_for_bd(self, request, left, right, idfromsite):
+        order_model = OrderModel.objects.filter(numuuid=idfromsite, pay_from__code=left, pay_to__code=right)
+        if order_model.count() != 1:
+            return False
+        order_model = order_model[0]
+
+        # Узнаём название статуса заявки
+        order_status = ''
+        for i in order_model.STATUS_CHOISES:
+            if i[0] == order_model.status:
+                order_status = i[1]
+                break
+
+        self.context = {'left': order_model.pay_from.screen,
+                        'right': order_model.pay_to.screen,
+                        'sum_from': order_model.sum_from,
+                        'sum_to': order_model.sum_to,
+                        'wallet_client_to': order_model.wallet_client_to,
+                        'wallet_client_from': order_model.wallet_client_from,
+                        'num': order_model.num,
+                        'date_create': order_model.data_create.strftime('%Y/%m/%d %H:%M:%S'),
+                        'type': order_model.pay_from.moneytype.moneytype,
+                        'type_freeze': order_model.pay_from.moneytype.freeze,
+                        'type_freeze_confirm': order_model.pay_from.moneytype.freeze_confirm,
+                        'text': order_model.text,
+                        'status': order_status,
+                        }
+        return True
+
     def get(self, request, left, right, idfromsite):
-        temp = OrderModel.objects.filter(numuuid=idfromsite, pay_from__code=left, pay_to__code=right)
-        if temp.count() != 1:
+        if self.get_order_for_bd(request, left, right, idfromsite):
+            return render(request, 'confirm.html', self.context)
+        else:
             return render(request, 'order_not_found.html')
 
-        # todo статус заявки пока не передаётся
-        context = {'left': temp[0].pay_from.screen,
-                   'right': temp[0].pay_to.screen,
-                   'sum_from': temp[0].sum_from,
-                   'sum_to': temp[0].sum_to,
-                   'wallet_client_to': temp[0].wallet_client_to,
-                   'wallet_client_from': temp[0].wallet_client_from,
-                   'num': temp[0].num,
-                   'date_create': temp[0].data_create.strftime('%Y/%m/%d %H:%M:%S'),
-                   'type': temp[0].pay_from.moneytype.moneytype,
-                   'type_freeze': temp[0].pay_from.moneytype.freeze,
-                   'type_freeze_confirm': temp[0].pay_from.moneytype.freeze_confirm,
-                   'text': temp[0].text,
-                   'status': temp[0].status,
-                   }
-
-        return render(request, 'confirm.html', context)
-
-    # todo django всё экранирует, но тем не менее надо вставить свои проверки тоже, чтобы не полагаться не понятно на что
     def post(self, request, left, right, idfromsite):
 
         # проверим то что пришло в адресной строке: left, right, idfromsite
@@ -118,7 +132,7 @@ class ConfirmView(View):
             if addfunc.check_wallet_add(wallet_add) == '':
                 return render(request, 'error.html', {'error': 'Что то пошло не так. Код ошибки: 116'})
 
-        # todo если крипте требуется доп.поле то проверяем, также в js на фронте надо вставить эту же проверку.
+        # todo если крипте требуется доп.поле то проверяем, также в js надо вставить эту же проверку.
         if (right == 'EOS') or (right == 'XRP'):
             if wallet_add == '':
                 return render(request, 'error.html', {'error': 'add wallet = " "'})
@@ -128,14 +142,14 @@ class ConfirmView(View):
         text = ChangeModel.objects.filter(active=True, pay_from__code=left, pay_to__code=right, pk=test_num)
         if text.count() != 1:
             return render(request, 'error.html', {'error': 'Что то пошло не так. Код ошибки: 100'})
-        text = text[0].text
+        if text[0].manual:
+            text = text[0].text
+        else:
+            text = ''
 
-        temp = OrderModel.objects.filter(numuuid=idfromsite, pay_from__code=left, pay_to__code=right)
+        order_model = OrderModel.objects.filter(numuuid=idfromsite, pay_from__code=left, pay_to__code=right)
 
-        if not temp.exists():  # если такой записи нет то создаём её
-            # todo делаем проверку курса обмена и после, если всё ок создаём заявку
-
-            # записываем в бд после проверки
+        if not order_model.exists():  # если такой записи нет то создаём её
             order = OrderModel()
             order.sum_from = sum_from
             order.sum_to = sum_to
@@ -159,46 +173,7 @@ class ConfirmView(View):
             order.text = text
             order.save()
 
-            temp = OrderModel.objects.get(numuuid=idfromsite)
-
-            context = {'left': left,
-                       'right': right,
-                       'sum_from': sum_from,
-                       'sum_to': sum_to,
-                       'wallet_client_to': wallet_client_to,
-                       'wallet_client_from': wallet_client_from,
-                       'wallet_add': wallet_add,
-                       'num': temp.num,
-                       'date_create': temp.data_create.strftime('%Y/%m/%d %H:%M:%S'),
-                       'type': PaySystemModel.objects.get(code=left).moneytype.moneytype,
-                       'type_freeze': PaySystemModel.objects.get(code=left).moneytype.freeze,
-                       'type_freeze_confirm': PaySystemModel.objects.get(code=left).moneytype.freeze_confirm,
-                       'text': text,
-                       'status': 'Новая заявка',  # todo вписать статус новой заявки из кортежа, а не напрямую
-                       }
-        else:  # если запись есть то получаем её данные и выводим их ,а не создаём новую заявку
-            # todo если статус заявки не новая то таймер js включать не надо
-            order_status = ''
-            for i in temp[0].STATUS_CHOISES:
-                if i[0] == temp[0].status:
-                    order_status = i[1]
-                    break
-            else:
-                return render(request, 'error.html', {'error': 'Что то пошло не так. Код ошибки: 102'})
-
-            context = {'left': temp[0].pay_from.screen,
-                       'right': temp[0].pay_to.screen,
-                       'sum_from': temp[0].sum_from,
-                       'sum_to': temp[0].sum_to,
-                       'wallet_client_to': temp[0].wallet_client_to,
-                       'wallet_client_from': temp[0].wallet_client_from,
-                       'num': temp[0].num,
-                       'date_create': temp[0].data_create.strftime('%Y/%m/%d %H:%M:%S'),
-                       'type': temp[0].pay_from.moneytype.moneytype,
-                       'type_freeze': temp[0].pay_from.moneytype.freeze,
-                       'type_freeze_confirm': temp[0].pay_from.moneytype.freeze_confirm,
-                       'text': temp[0].text,
-                       'status': order_status,
-                       }
-
-        return render(request, 'confirm.html', context)
+        if self.get_order_for_bd(request, left, right, idfromsite):
+            return render(request, 'confirm.html', self.context)
+        else:
+            return render(request, 'order_not_found.html')

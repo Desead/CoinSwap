@@ -1,6 +1,9 @@
 .idea
 venv
+vnv
 bsinfo
+__pycache__
+**/__pycache__
 
 coinswap.conf
 gunicorn.conf.py

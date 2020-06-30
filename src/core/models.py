@@ -46,8 +46,8 @@ class PaySystemModel(models.Model):
     # name = models.CharField(max_length=30, verbose_name='Название', unique=True)
     moneytype = models.ForeignKey(MoneyTypeModel, on_delete=models.CASCADE, verbose_name='Тип')  # Тип платёжки
     usedmoney = models.ForeignKey(UsedMoneyModel, on_delete=models.SET_NULL,
-                                  verbose_name='Расчётная валюта',
-                                  null=True)  # Базовая валюта
+                                  verbose_name='Базовая валюта платёжки',
+                                  null=True)
     fee = models.FloatField(default=0,
                             verbose_name='Комиссия платёжной системы в %')  # плата за перевод в самой платёжке
     fee_fix = models.FloatField(default=0,

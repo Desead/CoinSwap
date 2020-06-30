@@ -22,20 +22,23 @@ class WalletsModelAdmin(admin.ModelAdmin):
 
 @admin.register(MoneyTypeModel)
 class MoneyTypeModelAdmin(admin.ModelAdmin):
-    list_display = ('moneytype', 'freeze', 'description')
-    list_display_links = ('moneytype', 'freeze')
+    list_display = ('moneytype', 'freeze', 'freeze_confirm', 'description')
+    list_editable = ('freeze', 'freeze_confirm')
+    list_display_links = ('moneytype',)
     list_filter = ['freeze']
 
 
 @admin.register(PaySystemModel)
 class PaySystemsAdmin(admin.ModelAdmin):
     list_display = (
-    'screen', 'code', 'idbest', 'active', 'moneytype', 'usedmoney', 'max_balance', 'reserve','reserve_for_site', 'fee', 'fee_fix',
-    'fee_min', 'fee_max', 'url')
+        'screen', 'code', 'idbest', 'active', 'moneytype', 'usedmoney', 'max_balance', 'reserve', 'reserve_for_site',
+        'fee', 'fee_fix',
+        'fee_min', 'fee_max', 'url')
     list_display_links = ('screen', 'code', 'moneytype', 'usedmoney', 'idbest')
     list_filter = ('active', 'moneytype', 'usedmoney')
-    list_editable = ('active', 'max_balance', 'reserve', 'fee', 'fee_fix', 'fee_min', 'fee_max','reserve_for_site')
+    list_editable = ('active', 'max_balance', 'reserve', 'fee', 'fee_fix', 'fee_min', 'fee_max', 'reserve_for_site')
     search_fields = ('code', 'screen')
+    save_on_top = True
 
 
 @admin.register(SiteModel)
