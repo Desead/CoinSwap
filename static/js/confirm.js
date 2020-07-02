@@ -4,12 +4,9 @@
 
 
 let logo;
-// let stat;
 let pstype;
 let screen_code;
 let code_screen;
-// let changeside;
-// let swap;
 let swap_options;
 let time_freeze;
 let timerId;
@@ -27,13 +24,10 @@ req.onload = function () {
     }
 
     logo = JSON.parse(req.response)['img']
-    // stat = JSON.parse(req.response)['stat']
     pstype = JSON.parse(req.response)['pstype']
     screen_code = JSON.parse(req.response)['screen_code']
     code_screen = JSON.parse(req.response)['code_screen']
-    // changeside = JSON.parse(req.response)['changeside']
     time_freeze = JSON.parse(req.response)['time_freeze']
-    // swap = JSON.parse(req.response)['swap']
     swap_options = JSON.parse(req.response)['swap_options']
 
     let temp = location.pathname.split('/')

@@ -12,13 +12,8 @@ class StartView(View):
     context = {}
 
     def get(self, request):
-        # form = OrderModelForm()
-        # todo можно проверить платёжки на их наличие и если их нету выдать 404 ,также можно проверить длинну
-        #  названия платёжки чтобы не писали туда лишнего. оформить в функицю т.к. ниже надо тоже самое
-
-        x = request.path.strip('/').split('/')  # получии платёжки которые участвют в обмене
-
-        # self.context['direction'] = ChangeModel.objects.filter(active=True)
+        # todo можно проверить платёжки на их наличие и если их нету выдать 404
+        self.context['news'] = SiteModel.objects.filter(url__icontains=request.headers['Host'])[0].news
         return render(request, 'index.html', self.context)
 
 

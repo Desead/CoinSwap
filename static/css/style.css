@@ -178,7 +178,7 @@ header:after {
 
 .news {
     margin: 10px;
-    height: 100px;
+    min-height: 100px;
     overflow: hidden;
 }
 

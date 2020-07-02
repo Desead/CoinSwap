@@ -20,27 +20,6 @@ def clearbd(request):
                 temp.name = v
                 temp.save()
 
-    # if request.GET.get('settings') == 'rates':
-    #     cnt = 0
-    #     a = best.getRates()
-    #     if len(a) > 0:
-    #         BSrates.objects.all().delete()
-    #         for i in a:
-    #             if len(i) < 6:
-    #                 continue
-    #             temp = BSrates()
-    #             temp.curfrom = i[0]
-    #             temp.curto = i[1]
-    #             temp.exch = i[2]
-    #             temp.ratefrom = i[3]
-    #             temp.rateto = i[4]
-    #             temp.res = i[5]
-    #             temp.dt = datetime.datetime.now()
-    #             temp.save()
-    #             cnt += 1
-    #             if cnt >= 100:
-    #                 break
-
     if request.GET.get('settings') == 'all':
         AllRates.objects.all().delete()
         bn = Binance.objects.all()

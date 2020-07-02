@@ -1,6 +1,5 @@
 from django.http import JsonResponse
 from src.change.models import ChangeModel
-from src.core.models import MoneyTypeModel, PaySystemModel
 from src.parsers.models import AllRates
 
 

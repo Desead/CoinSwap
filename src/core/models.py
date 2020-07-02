@@ -5,6 +5,8 @@ from django.utils.timezone import now
 # Список всех валют которые используются в работе обменника
 class UsedMoneyModel(models.Model):
     usedmoney = models.CharField(max_length=10, unique=True, verbose_name='Название валюты')
+    description = models.TextField(verbose_name='Комментарий. Для себя.', blank=True,
+                                   default='Валюты регистрозависимые. rub не равно RUB')
 
     def __str__(self):
         return self.usedmoney
