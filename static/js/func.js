@@ -200,8 +200,7 @@ function correctForm() {
         if (temp) temp.remove();
     } else {
         temp = document.querySelector('.line6 .lock')
-        // temp.attributes.title.value = 'Текущая комиссия: ' + Math.max(ps_fee_to[right].fee_fix, ps_fee_to[right].fee_min) + ' ' + right + '. Можете поставить собственную. Разница между дополнительной и текущей комиссией оплачивается клиентом. Курс обмена включает в себя все комиссии. Поле можно оставить пустым'
-        temp.attributes.title.value = 'Комиссия обменника может меняться в зависимости от суммы обмена. В среднем комиссия составляет 0.0001 btc'
+        temp.attributes.title.value = 'Используется рекомендуемая нодой комиссия. Если не устраивает, введите свою. Комиссия полностью оплачивается клиентом'
     }
 
 
@@ -280,6 +279,8 @@ function correctForm() {
 // все комиссии, прибыль, маржа и т.д. считаюстя всегда только с отдаваемой стороны
 // если есть и фикс и % то сначала всегда считаем прцент потом фикс
 // тут считаем все курсы обмена
+
+
 function rates(side = 'test') {
     let left = screen_code[document.querySelector('.fromside.seldiv').innerText];
     let right = screen_code[document.querySelector('.toside.seldiv').innerText];
@@ -299,87 +300,74 @@ function rates(side = 'test') {
     }
 
     let input_value = +input_source.value // сумма для обмена
+    if (input_value <= 0) {
+        document.querySelector('#sum_from').value = ''
+        document.querySelector('#sum_to').value = ''
+        return
+    }
     let temp = 0;
     let prev = undefined;
+
+    // смотрим есть ли своя комиссия
+    let fee_client = document.querySelector('#fee_client')
+    if (fee_client) {
+        fee_client = Math.max(+fee_client.value, 0)
+    } else fee_client = 0;
+
     // цикл нужен изза возможных ступенчатых курсов
     for (let i of swap_options[left + '_' + right]) {
         if (!i.active) continue;
         if (input_source.id === 'sum_from') {
-            // перебираем все варианты которые подходят и проверяем их на соответствие ограничениям противоположной стороны. выбираем с меньшей комиссией
-            if ((+i.pay_from_min <= +input_value) && (+input_value <= +i.pay_from_max)) {
+            //сначала посчитали курс обмена, без комиссий.
+            temp = +((input_value * (+i.rate_to) / (+i.rate_from)).toFixed(pstype[right] === 'crypto' ? 8 : 2))
 
-                //сначала посчитали курс обмена, без комиссий.
-                temp = +((input_value * (+i.rate_to) / (+i.rate_from)).toFixed(pstype[right] === 'crypto' ? 8 : 2))
+            let fee = temp * (+i.fee) / 100 + i.fee_fix
+            if (+i.fee_min > 0) fee = Math.max(fee, +i.fee_min)
+            if (+i.fee_max > 0) fee = Math.min(fee, +i.fee_max)
 
-                console.log('temp: ' + temp)
-                let fee = temp * (+i.fee) / 100 + i.fee_fix
-                if (i.fee_min <= i.fee_max) {
-                    if (+i.fee_min > 0) fee = Math.max(fee, +i.fee_min)
-                    if (+i.fee_max > 0) fee = Math.min(fee, +i.fee_max)
-                }
+            fee = +(fee.toFixed(pstype[right] === 'crypto' ? 8 : 2))
 
-                fee = +(fee.toFixed(pstype[right] === 'crypto' ? 8 : 2))
+            temp = Math.max((temp - fee - fee_client), 0).toFixed(pstype[right] === 'crypto' ? 8 : 2)
 
-                console.log('fee: ' + fee)
-
-                //выбираем лучший вариант для клиента
-                if (prev === undefined) {
-                    prev = temp
+            //выбираем лучший вариант для клиента
+            if (prev === undefined) {
+                prev = temp
+                document.querySelector('#test_num').value = i.test_num
+            } else {
+                if (temp > prev) {
                     document.querySelector('#test_num').value = i.test_num
-                } else {
-                    if (temp > prev) {
-                        document.querySelector('#test_num').value = i.test_num
-                        prev = temp;
-                    } else temp = prev;
-                }
-                // правильно округляем
-
-                //смотрим есть ли своя комиссия, если да, то уменьшаем сумму отправки на неё
-                let fee_client = document.querySelector('#fee_client')
-                if (fee_client) {
-                    fee_client = +fee_client.value
-                    let set_fee = +ps_fee_to[right].fee_fix
-                    if (set_fee < fee_client) {
-                        fee_client = fee_client - set_fee
-                        temp = temp - fee_client;
-                    }
-                }
+                    prev = temp;
+                } else temp = prev;
             }
+
         } else if (input_source.id === 'sum_to') { // здесь нужно всё считать наоборот
-            if ((+i.pay_to_min <= +input_value) && (+input_value <= +i.pay_to_max)) {
 
-                let fee_client = document.querySelector('#fee_client')
-                if (fee_client) {
-                    fee_client = +fee_client.value
-                    let set_fee = +ps_fee_to[right].fee_fix
-                    if (set_fee < fee_client) {
-                        fee_client = fee_client - set_fee
-                    } else fee_client = 0;
-                } else fee_client = 0;
+            // Сначала нужно получить комиссию и сравнить её с минимальной
+            // получили сумму от которой если отнять все комиссии то получим введённое значение
+            temp = (input_value + (+i.fee_fix) + fee_client) * 100 / (100 - (+i.fee))
+            // берём разницу чтобы получить комиссию
+            temp = +((temp - input_value).toFixed(pstype[right] === 'crypto' ? 8 : 2))
+            // сравниваем комиссию с минимальной
+            temp = Math.max(temp, +i.fee_min)
+            //поулчаем сумму из которой можно по курсу получить начальную величину обмена
+            temp = temp + input_value
+            // поулчаем начальную сумму обмена
+            temp = +((temp * (+i.rate_from) / (+i.rate_to)).toFixed(pstype[left] === 'crypto' ? 8 : 2))
 
-                temp = ((input_value + (+ps_fee_to[right].fee_fix) + fee_client) / (100 - (+ps_fee_to[right].fee)) * 100 + (+i.fee_fix)) / (100 - (+i.fee)) * 100 * (+i.rate_from) / (+i.rate_to)
-                temp = input_value
-
-                if (prev === undefined) {
-                    prev = temp
+            if (prev === undefined) {
+                prev = temp
+                document.querySelector('#test_num').value = i.test_num
+            } else {
+                if (temp < prev) {
+                    prev = temp;
                     document.querySelector('#test_num').value = i.test_num
-                } else {
-                    if (temp < prev) {
-                        prev = temp;
-                        document.querySelector('#test_num').value = i.test_num
-                    } else temp = prev;
-                }
-                let rnd = 2;
-                if (pstype[left] === 'crypto') rnd = 8
-                temp = +temp.toFixed(rnd)
+                } else temp = prev;
             }
+
         }
     }
 
-
-    // надо поставить окгруление до верного кол-ва цифр
-    input_destination.value = Math.max(temp, 0);
-    // console.log(i)
+    input_destination.value = temp
 }
 
 //убираем из строки ввода все буквы, запятую преобразуем в точку и разрешаем только одну точку
@@ -412,11 +400,6 @@ function str2num() {
             res.push(i);
             if (coma) rnd--;
         }
-    }
-
-    if (+res.join('') > max_input) {
-        this.value = max_input
-        return
     }
 
     this.value = res.join('');
@@ -500,23 +483,33 @@ function sort2elem(mx) {
 
 // пересчитываем изза изменения пользовательской комиссии
 function reCalc() {
-    let temp = document.getElementsByName('sumlock')
+    let temp = document.querySelector('#sum_from')
     if (temp)
-        for (let i of temp)
-            if (i.checked) {
-                if (i.value === 'sumfromlock') rates('left')
-                else rates('right')
-                return
-            }
-    rates('left')
+        if (temp.value > 0) {
+            temp = document.querySelector('#sum_to')
+            if (temp)
+                if (temp.value > 0) {
+                    temp = document.getElementsByName('sumlock')
+                    if (temp)
+                        for (let i of temp)
+                            if (i.checked) {
+                                if (i.value === 'sumfromlock') rates('left')
+                                else rates('right')
+                                return
+                            }
+                    rates('left')
+                }
+        }
 }
 
 // если ничего не изменилось то и нет смысла пересчитывать. нереализовано
 function clearFee() {
     let temp = document.getElementsByName('sumlock')
+
     if (temp)
         for (let i of temp)
             if (i.checked) {
+                document.querySelector('#fee_client').value = '';
                 if (i.value === 'sumtolock') rates('right')
                 else rates('left')
                 break;
@@ -560,6 +553,7 @@ function checkForm() {
         document.querySelector('#sum_to').classList.add('warning')
     }
 
+    // если варнингов нету то разрешаем кнопке отправить форму
     if (document.querySelectorAll('.warning').length === 0) {
         document.querySelector('#newFormAction').attributes.type.value = 'submit';
     }

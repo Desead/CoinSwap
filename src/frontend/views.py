@@ -128,7 +128,7 @@ class ConfirmView(View):
         if sumlock == '':
             return render(request, 'error.html', {'error': 'Что то пошло не так. Код ошибки: 110'})
 
-        fee_client = addfunc.str2float(request.POST.get('fee_client', '0'))
+        fee_client = max(addfunc.str2float(request.POST.get('fee_client', '0')), 0)
 
         nmphone = addfunc.str2int(request.POST.get('nmphone', '11111111111'))
         if nmphone <= 0:
@@ -181,27 +181,34 @@ class ConfirmView(View):
         rates = AllRates.objects.filter(base=change.pay_from.usedmoney.usedmoney,
                                         profit=change.pay_to.usedmoney.usedmoney)
 
+        # todo вставить проверку рассчитанных и получаемых цифр на выход за мин и макс
         if rates.count() != 1:
             return render(request, 'error.html', {'error': 'Что то пошло не так. Код ошибки: 117'})
 
         rates = rates[0]
-        fee = change.fee
 
         if sumlock == 'sumtolock':
-            pass
+            temp = (sum_to + change.fee_fix + fee_client) * 100 / (100 - change.fee)
+            temp = round(temp - sum_to, 8 if change.pay_to.moneytype.moneytype == 'crypto' else 2)
+            temp = max(temp, change.fee_min)
+            temp = temp + sum_to
+            sum_from = round(temp * rates.nominal_1 / rates.nominal_2,
+                             8 if change.pay_from.moneytype.moneytype == 'crypto' else 2)
         else:
             # посчитали сумму которую нужно отдать просто по курсу обмена
             out_money = round(sum_from * rates.nominal_2 / rates.nominal_1,
                               8 if change.pay_to.moneytype.moneytype == 'crypto' else 2)
 
             # отдельно считаем комиссию за обмен
-            fee = out_money * fee / 100 + change.fee_fix
-            if change.fee_min <= change.fee_max:
-                if change.fee_min > 0:
-                    max(fee, change.fee_min)
-                if change.fee_max > 0:
-                    min(fee, change.fee_max)
+            fee = out_money * change.fee / 100 + change.fee_fix
+            if change.fee_min > 0:
+                fee = max(fee, change.fee_min)
+            if change.fee_max > 0:
+                fee = min(fee, change.fee_max)
             fee = round(fee, 8 if change.pay_to.moneytype.moneytype == 'crypto' else 2)
+
+            sum_to = round(max(out_money - fee - fee_client, 0),
+                           8 if change.pay_to.moneytype.moneytype == 'crypto' else 2)
 
         if not order_model.exists():  # если такой записи нет то создаём её
             order = OrderModel()

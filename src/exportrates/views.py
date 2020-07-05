@@ -35,23 +35,21 @@ def xmlrts(request):
                 left = rates.get(base=base_money, profit=profit_money).nominal_1
                 right = rates.get(base=base_money, profit=profit_money).nominal_2
 
-            fee = right * i.fee / 100
-            if i.fee_min != 0:
+            fee = right * i.fee / 100 + i.fee_fix
+            if i.fee_min > 0:
                 fee = max(fee, i.fee_min)
-            if i.fee_max != 0:
+            if i.fee_max > 0:
                 fee = min(fee, i.fee_max)
 
             in_element = xml.SubElement(item_element, 'in')
             in_element.text = str(left)
 
             out_element = xml.SubElement(item_element, 'out')
-            out_element.text = str(right)
+            out_element.text = str(right - fee)
 
             amount_element = xml.SubElement(item_element, 'amount')
             amount_element.text = str(i.pay_to.reserve_for_site)
 
-            # todo не факт что комиссии считаются правильно. надо проверять после попадания в мониторинг. Вероятно
-            #  наиболее удобно все эти комиссии поместить на страницу каждого из обменов. Тогда будет точно понятно что и куда относится
             temp = i.pay_to.fee_min
             if temp != 0:
                 minfee_element = xml.SubElement(item_element, 'minfee')
