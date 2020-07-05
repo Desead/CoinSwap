@@ -1,14 +1,18 @@
 import uuid
 from django.db import models
 from django.utils.timezone import now
-from src.core.models import PaySystemModel, SiteModel, UsedMoneyModel
+from src.core.models import PaySystemModel, SiteModel, UsedMoneyModel, CityModel
+from src.parsers.models import AllRates
 from django.contrib.auth.models import User
+from src.additions.validators import validate_zero, validate_more_zero
 
 
 # модель заявки
 # todo дата создания - необходимо везде использовтаь одно и тоже время. на фронте в JS используется UTC, здесь
 #  необходимо также. или как вариант - вписать сюда дату из JS
 # todo uuid заявки надо сделать, именно её показывать в адресной строке, а не номер заявки
+
+
 class OrderModel(models.Model):
     STATUS_CHOISES = (
         ('ok', 'Выполнена'),
@@ -76,21 +80,30 @@ class OrderModel(models.Model):
 # todo нужна проверка чтобы нельзя было создавать дво одинаковых направления обмена
 # todo в заявку надо сохранять слепок всех участвующих в обмене цифр, тогда можно будет решить все проблемы
 class ChangeModel(models.Model):
-    # id_step=models.PositiveSmallIntegerField(default=0, auto_created=True, editable=False)
     site = models.ForeignKey(SiteModel, on_delete=models.CASCADE, verbose_name='Сайт', default=0, null=True)
     pay_from = models.ForeignKey(PaySystemModel, on_delete=models.CASCADE, verbose_name='Клиент отдаёт',
                                  related_name='pay_from_change')
-    pay_from_min = models.FloatField(verbose_name='Мин', default=0)
-    pay_from_max = models.FloatField(verbose_name='Макс')
+    pay_from_min = models.FloatField(verbose_name='Мин', default=0, validators=[validate_more_zero], help_text=' Значение больше 0')
+    pay_from_max = models.FloatField(verbose_name='Макс', default=0, validators=[validate_more_zero], help_text=' Значение больше 0')
     pay_to = models.ForeignKey(PaySystemModel, on_delete=models.CASCADE, verbose_name='Клиент получает',
                                related_name='pay_to_change')
-    pay_to_min = models.FloatField(verbose_name='Мин', default=0)
-    pay_to_max = models.FloatField(verbose_name='Макс')
-    fee = models.FloatField(verbose_name='Комиссия за обмен в %', default=1)
-    fee_fix = models.FloatField(verbose_name='Фиксированная комиссия', default=0)
+    pay_to_min = models.FloatField(verbose_name='Мин', default=0, validators=[validate_more_zero], help_text=' Значение больше 0')
+    pay_to_max = models.FloatField(verbose_name='Макс', default=0, validators=[validate_more_zero], help_text=' Значение больше 0')
+    # если ставить сюда связь с обменным курсом то при обновлении таблицы курсов, здесь всё может сбиться
+    # rate_base = models.ForeignKey(AllRates, on_delete=models.CASCADE, verbose_name='Курс обмена')
+    fee = models.FloatField(verbose_name='Комиссия за обмен в %', default=0, help_text='Может быть отрицательной')
+    fee_fix = models.FloatField(verbose_name='Фиксированная комиссия', default=0, help_text='В отдаваемой валюте, >=0',
+                                validators=[validate_zero])
+    # todo если есть мин.комиссия то и отдаваемая сумма должна быть не меньше этой комиссии
+    fee_min = models.FloatField(verbose_name='Минимальная комиссия', default=0, help_text='В отдаваемой валюте, >=0',
+                                validators=[validate_zero])
+    fee_max = models.FloatField(verbose_name='Максимальная комиссия', default=0, help_text='В отдаваемой валюте, >=0',
+                                validators=[validate_zero])
+    city_change = models.ForeignKey(CityModel, on_delete=models.CASCADE, verbose_name='Город обмена наличных',
+                                    null=True, blank=True)
     active = models.BooleanField(default=False, verbose_name='Активно')
     dinamic_fee = models.BooleanField(default=True, verbose_name='Динамическая маржа')
-    manual = models.BooleanField(default=False, verbose_name='Ручной обмен')
+    manual = models.BooleanField(default=False, verbose_name='Ручной обмен', help_text='Наличные расчёты всегда ручные')
     juridical = models.BooleanField(default=False, verbose_name='Перевод со счёта')
     verifying = models.BooleanField(default=False, verbose_name='Документы')
     cardverify = models.BooleanField(default=False, verbose_name='Верификация карты')
@@ -100,6 +113,7 @@ class ChangeModel(models.Model):
     reg = models.BooleanField(default=False, verbose_name='Регистрация')
     card2card = models.BooleanField(default=False, verbose_name='Перевод на карту')
     text = models.TextField(verbose_name='Текст для ручного обмена', blank=True)
+
     description = models.TextField(blank=True, verbose_name='Комментарий. Для себя')
 
     def __str__(self):

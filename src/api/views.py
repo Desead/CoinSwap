@@ -21,7 +21,7 @@ def JsonView(request):
     b = {'img': {}, 'pstype': {}, 'screen_code': {}, 'code_screen': {}, 'time_freeze': {},
          'swap': {}, 'swap_options': {}, 'sort_from': {}, 'sort_to': {}, 'ps_fee_to': {}}
 
-    # составили направления обменов. откуда и куда. Используем множество чтобы удалить повторы
+    # составили направления обменов. откуда и куда. Вначале используем множество чтобы удалить повторы
     for i in change:
         b['swap'].setdefault(i.pay_from.code, set())
         b['swap'][i.pay_from.code].add(i.pay_to.code)
@@ -39,6 +39,10 @@ def JsonView(request):
             'active'] = i.active and i.pay_from.active and i.pay_to.active_out and i.pay_to.active and (
                 i.pay_from.reserve < i.pay_from.max_balance)
         b['swap_options'][name_swap][count_swap]['manual'] = i.manual
+        if not i.manual:
+            if ((len(i.pay_from.code) >= 7) and i.pay_from.code.startswith('CASH')) or ((len(i.pay_to.code) >= 7) and i.pay_to.code.startswith('CASH')):
+                b['swap_options'][name_swap][count_swap]['manual'] = True
+
         b['swap_options'][name_swap][count_swap]['juridical'] = i.juridical
         b['swap_options'][name_swap][count_swap]['verifying'] = i.verifying
         b['swap_options'][name_swap][count_swap]['cardverify'] = i.cardverify
@@ -53,11 +57,15 @@ def JsonView(request):
         b['swap_options'][name_swap][count_swap]['pay_to_max'] = min(i.pay_to_max, i.pay_to.reserve)
         b['swap_options'][name_swap][count_swap]['fee'] = i.fee
         b['swap_options'][name_swap][count_swap]['fee_fix'] = i.fee_fix
+        b['swap_options'][name_swap][count_swap]['fee_min'] = i.fee_min
+        b['swap_options'][name_swap][count_swap]['fee_max'] = i.fee_max
         b['swap_options'][name_swap][count_swap]['test_num'] = i.pk
 
         # получаем курс обмена
         base_money = i.pay_from.usedmoney.usedmoney
         profit_money = i.pay_to.usedmoney.usedmoney
+        # todo постоянное обращение к таблице курсов надо заменить на разовое
+
         if base_money == profit_money:
             b['swap_options'][name_swap][count_swap]['rate_from'] = 1
             b['swap_options'][name_swap][count_swap]['rate_to'] = 1

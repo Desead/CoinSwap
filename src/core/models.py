@@ -1,12 +1,11 @@
 from django.db import models
 from django.utils.timezone import now
-
+from src.additions.validators import validate_zero
 
 # Список всех валют которые используются в работе обменника
 class UsedMoneyModel(models.Model):
-    usedmoney = models.CharField(max_length=10, unique=True, verbose_name='Название валюты')
-    description = models.TextField(verbose_name='Комментарий. Для себя.', blank=True,
-                                   default='Валюты регистрозависимые. rub не равно RUB')
+    usedmoney = models.CharField(max_length=10, unique=True, verbose_name='Название валюты', help_text='Валюты регистрозависимые. rub не равно RUB')
+    description = models.CharField(max_length=255, verbose_name='Комментарий. Для себя.', blank=True)
 
     def __str__(self):
         return self.usedmoney
@@ -82,6 +81,8 @@ class SiteModel(models.Model):
     working = models.CharField(max_length=30, default='10:30 22:00', verbose_name='Время работы')
     mail = models.EmailField(default='info@change.ru', verbose_name='Почта для связи', blank=True)
     news = models.TextField(default='', blank=True, verbose_name='Новость на главную')
+    first_num = models.PositiveIntegerField(default=0, verbose_name='Номер первой заявки', validators=[validate_zero])
+    technical_work = models.BooleanField(default=False, verbose_name='Технические работы')
     description = models.CharField(max_length=255, blank=True, verbose_name='Комментарий. Для себя')
 
     def __str__(self):
@@ -94,33 +95,21 @@ class SiteModel(models.Model):
 
 
 # Общие настройки обменника.
-class ExchangeSettings(models.Model):
-    site = models.ForeignKey(SiteModel, on_delete=models.CASCADE, verbose_name='Настройки для сайта',
-                             default=0)
-    # Время которое выделяется клиенту на осуществление перевода. Если клиент не успел то заявка отменяется.
-    # Время указывается в минутах
-    timeout_eps = models.PositiveIntegerField(default=15, verbose_name='Время на оплату для Электронной ПС')
-    timeout_cash = models.PositiveIntegerField(default=60, verbose_name='Время на оплату для Наличных')
-    timeout_moneysend = models.PositiveIntegerField(default=30,
-                                                    verbose_name='Время на оплату для Денежного перевода')
-    timeout_code = models.PositiveIntegerField(default=15, verbose_name='Время на оплату для Кода криптобиржи')
-    timeout_crypto1 = models.PositiveIntegerField(default=15, verbose_name='Время на оплату для Криптовалюты')
-    timeout_crypto2 = models.PositiveIntegerField(default=120,
-                                                  verbose_name='Время на ожидание подтверждения для Криптовалюты')
-    timeout_crypto3 = models.PositiveSmallIntegerField(default=1,
-                                                       verbose_name='Кол-во необходимых подтверждений для Криптовалюты')
-    timeout_bank = models.PositiveIntegerField(default=15, verbose_name='Время на оплату для Банковского перевода')
-    first_num = models.PositiveIntegerField(default=0, verbose_name='Номер первой заявки')
-    news = models.TextField(default='', verbose_name='Текст новости на главной')
-    technical_work = models.BooleanField(default=False, verbose_name='Технические работы')
-    description = models.CharField(max_length=255, blank=True, verbose_name='Комментарий. Для себя')
-
-    def __str__(self):
-        return 'Настройки для ' + self.site.name
-
-    class Meta:
-        verbose_name = 'Настройки обменника'
-        verbose_name_plural = '5. Настройки обменника'
+# class ExchangeSettings(models.Model):
+#     site = models.ForeignKey(SiteModel, on_delete=models.CASCADE, verbose_name='Настройки для сайта',
+#                              default=0)
+#
+#     first_num22 = models.PositiveIntegerField(default=0, verbose_name='Номер первой заявки', validators=[validate_zero])
+#     news = models.TextField(default='', verbose_name='Текст новости на главной')
+#     technical_work = models.BooleanField(default=False, verbose_name='Технические работы')
+#     description = models.CharField(max_length=255, blank=True, verbose_name='Комментарий. Для себя')
+#
+#     def __str__(self):
+#         return 'Настройки для ' + self.site.name
+#
+#     class Meta:
+#         verbose_name = 'Настройки обменника'
+#         verbose_name_plural = '5. Настройки обменника'
 
 
 # Используемые города. Актуально для наличных обменов
@@ -133,7 +122,7 @@ class CityModel(models.Model):
 
     class Meta:
         verbose_name = 'Город'
-        verbose_name_plural = '6. Города'
+        verbose_name_plural = '5. Города'
         ordering = ['name']
 
 
@@ -145,10 +134,10 @@ class WalletsModel(models.Model):
     token = models.CharField(max_length=255, verbose_name='Токен/доп.поле кошелька', default=0)
     count_in = models.PositiveSmallIntegerField(default=0, verbose_name='Кол-во входов за сутки')
     count_out = models.PositiveSmallIntegerField(default=0, verbose_name='Кол-во выходов за сутки')
-    money_in = models.PositiveSmallIntegerField(default=0, verbose_name='Денег пришло за сутки')
-    money_in_rub = models.PositiveSmallIntegerField(default=0, verbose_name='Денег пришло в рублях')
-    money_out = models.PositiveSmallIntegerField(default=0, verbose_name='Денег ушло за сутки')
-    money_out_rub = models.PositiveSmallIntegerField(default=0, verbose_name='Денег ушло в рублях')
+    money_in = models.FloatField(default=0, verbose_name='Денег пришло за сутки')
+    money_in_rub = models.FloatField(default=0, verbose_name='Денег пришло за сутки в рублях')
+    money_out = models.FloatField(default=0, verbose_name='Денег ушло за сутки')
+    money_out_rub = models.FloatField(default=0, verbose_name='Денег ушло за сутки в рублях')
     max_balance = models.FloatField(default=0, verbose_name='Максимальный баланс кошелька')
     balance = models.FloatField(default=0, verbose_name='Текущий баланс кошелька')
     balance_rub = models.FloatField(default=0, verbose_name='Текущий баланс в рублях')
@@ -165,3 +154,4 @@ class WalletsModel(models.Model):
         verbose_name = 'Кошелёк'
         verbose_name_plural = 'Кошельки'
         ordering = ('pay', 'name')
+

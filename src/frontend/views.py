@@ -3,9 +3,9 @@ from django.shortcuts import render
 from django.utils.timezone import now
 from django.views.generic.base import View
 from src.change.models import OrderModel, ChangeModel
-from src.change.forms import HTMLform
 from src.core.models import PaySystemModel, SiteModel
 from src.frontend.library import addfunc
+from src.parsers.models import AllRates
 
 
 class StartView(View):
@@ -13,8 +13,37 @@ class StartView(View):
 
     def get(self, request):
         # todo можно проверить платёжки на их наличие и если их нету выдать 404
-        self.context['news'] = SiteModel.objects.filter(url__icontains=request.headers['Host'])[0].news
+        temp = SiteModel.objects.filter(url__icontains=request.headers['Host'])
+        if temp.count == 1:
+            temp = temp[0].news
+        else:
+            temp = ''
+        self.context['news'] = temp
+        # return render(request, 'start_page.html', self.context)
         return render(request, 'index.html', self.context)
+
+
+class RulesView(View):
+    def get(self, request):
+        context = {'host_name': request.headers['Host'].split(':')[0]}
+        return render(request, 'rules.html', context)
+
+
+class ChangeView(View):
+    context = {}
+
+    def get(self, request, left, right, idfromsite):
+        print('Меняем ? get')
+        return render(request, 'change.html', self.context)
+
+    def post(self, request, left, right, idfromsite):
+        temp = request.POST
+        if temp == 'Отменить':
+            print('Отменить заявку')
+        else:
+            pass
+
+        return render(request, 'change.html', self.context)
 
 
 class ConfirmView(View):
@@ -33,6 +62,7 @@ class ConfirmView(View):
     113 - неверная почта
     115,114 - клиентом указаны неверные кошельки
     116 - что то не так с дополнительным полем для крипты
+    117 - не найден курс обмена по бозовым валютам из таблицы всех курсов
     """
 
     # todo сраницу order_not_found сделать более информативной ?
@@ -40,6 +70,8 @@ class ConfirmView(View):
 
     # берём данные заявки из бд и заполняем их в словарь для вывода
     def get_order_for_bd(self, request, left, right, idfromsite):
+        # print(request.POST.get)
+
         order_model = OrderModel.objects.filter(numuuid=idfromsite, pay_from__code=left, pay_to__code=right)
         if order_model.count() != 1:
             return False
@@ -75,7 +107,6 @@ class ConfirmView(View):
             return render(request, 'order_not_found.html')
 
     def post(self, request, left, right, idfromsite):
-
         # проверим то что пришло в адресной строке: left, right, idfromsite
         if addfunc.check_pscode(left) == '':
             return render(request, 'error.html', {'error': 'Что то пошло не так. Код ошибки: 105'})
@@ -103,6 +134,7 @@ class ConfirmView(View):
         if nmphone <= 0:
             return render(request, 'error.html', {'error': 'Что то пошло не так. Код ошибки: 111'})
 
+        # todo test_num можно проверить на соответствие номера запроса и названия платёжек слева и справа. есть ои такое совпадение
         test_num = addfunc.str2int(request.POST.get('test_num', ''))
         if test_num <= 0:
             return render(request, 'error.html', {'error': 'Что то пошло не так. Код ошибки: 112'})
@@ -134,15 +166,42 @@ class ConfirmView(View):
             if len(wallet_add) > 50:
                 return render(request, 'error.html', {'error': 'add wallet  very long'})
 
-        text = ChangeModel.objects.filter(active=True, pay_from__code=left, pay_to__code=right, pk=test_num)
-        if text.count() != 1:
+        change = ChangeModel.objects.filter(active=True, pay_from__code=left, pay_to__code=right, pk=test_num)
+        text = ''
+        if change.count() != 1:
             return render(request, 'error.html', {'error': 'Что то пошло не так. Код ошибки: 100'})
-        if text[0].manual:
-            text = text[0].text
-        else:
-            text = ''
+        change = change[0]
+        if change.manual:
+            text = change.text
 
         order_model = OrderModel.objects.filter(numuuid=idfromsite, pay_from__code=left, pay_to__code=right)
+
+        # проверем корректность сумм для обменаю Всё пересчитываем
+
+        rates = AllRates.objects.filter(base=change.pay_from.usedmoney.usedmoney,
+                                        profit=change.pay_to.usedmoney.usedmoney)
+
+        if rates.count() != 1:
+            return render(request, 'error.html', {'error': 'Что то пошло не так. Код ошибки: 117'})
+
+        rates = rates[0]
+        fee = change.fee
+
+        if sumlock == 'sumtolock':
+            pass
+        else:
+            # посчитали сумму которую нужно отдать просто по курсу обмена
+            out_money = round(sum_from * rates.nominal_2 / rates.nominal_1,
+                              8 if change.pay_to.moneytype.moneytype == 'crypto' else 2)
+
+            # отдельно считаем комиссию за обмен
+            fee = out_money * fee / 100 + change.fee_fix
+            if change.fee_min <= change.fee_max:
+                if change.fee_min > 0:
+                    max(fee, change.fee_min)
+                if change.fee_max > 0:
+                    min(fee, change.fee_max)
+            fee = round(fee, 8 if change.pay_to.moneytype.moneytype == 'crypto' else 2)
 
         if not order_model.exists():  # если такой записи нет то создаём её
             order = OrderModel()
@@ -172,3 +231,13 @@ class ConfirmView(View):
             return render(request, 'confirm.html', self.context)
         else:
             return render(request, 'order_not_found.html')
+
+
+class ContactView(View):
+    def get(self, request):
+        temp = SiteModel.objects.filter(url__icontains=request.headers['Host'])
+        context = {}
+        if temp.count == 1:
+            context = {'mail': temp[0].mail,
+                       'time': temp[0].working}
+        return render(request, 'contacts.html', context)

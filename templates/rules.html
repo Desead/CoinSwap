@@ -1,15 +1,18 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block header %}
-    <a class="nav-link" href="/">Главная</a>
-    <a class="nav-link active" href="/rules/">Правила</a>
-{#    <a class="nav-link" href="/faq/">Вопросы</a>#}
-    <a class="nav-link" href="/contacts/">Контакты</a>
-    <a class="nav-link" href="/lk/">Вход</a>
+{% block description_for_page %}
+    'Описание для страницы'
+{% endblock %}
+{% block keywords_for_page %}
+    'Ключевые слова'
+{% endblock %}
+{% block title_for_page %}
+    Меняй смело! Правила
 {% endblock %}
 
 {% block warning %}
-    <h1>Соглашение о предоставлении услуг сервисом {{ request.get_host }}</h1>
+    <h1>Соглашение о предоставлении услуг сервисом {{ host_name }}</h1>
 {% endblock %}
 
 {% block content %}
@@ -88,5 +91,5 @@
 
         </div>
     </div>
-
+    <script src="{% static 'js/rules.js' %}"></script>
 {% endblock %}

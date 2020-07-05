@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block header %}
-    <a class="nav-link active" href="/">Главная</a>
-    <a class="nav-link" href="/rules/">Правила</a>
-{#    <a class="nav-link" href="/faq/">Вопросы</a>#}
-    <a class="nav-link" href="/contacts/">Контакты</a>
-    <a class="nav-link" href="/lk/">Вход</a>
+{% block description_for_page %}
+    'Описание для страницы'
+{% endblock %}
+{% block keywords_for_page %}
+    'Ключевые слова'
+{% endblock %}
+{% block title_for_page %}
+    Меняй смело!
 {% endblock %}
 
 {% block warning %}
@@ -203,7 +205,6 @@
         </div>
     </template>
 
-    {#    <script src="{% static 'js/check.js' %}"></script>#}
-    <script src="{% static 'js/func2.js' %}"></script>
-    <script src="{% static 'js/main2.js' %}"></script>
+    <script src="{% static 'js/func.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
 {% endblock %}

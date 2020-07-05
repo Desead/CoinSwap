@@ -24,7 +24,7 @@ SECRET_KEY = '!%!67f-h2a=hc%dituzrors4_6lv#=zk-32td85i5)t_ijx2#l'
 # # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 #
-ALLOWED_HOSTS = ['bitlab.work', '89.108.99.211', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Application definition
 
@@ -36,12 +36,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # 'django.contrib.sites',
+
     'src.change.apps.ChangeConfig',
     'src.core.apps.CoreConfig',
     'src.parsers.apps.ParsersConfig',
     'src.clearingbd.apps.ClearingbdConfig',
     'src.api.apps.ApiConfig',
     'src.frontend.apps.FrontendConfig',
+    'src.exportrates.apps.ExportratesConfig',
+
+    'src.merchants.qiwi',
 
 ]
 
@@ -78,7 +83,8 @@ WSGI_APPLICATION = 'CoinSwap.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
+# todo если использовать 2 бд? В первую заносить пришедшие с сайта заявки, здесь всё искать и как только всё однозначно
+# ясно с заявкой, создавать запись в общей бд
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -129,6 +135,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 SITE_ID = 1
+XML_RATES_SITE1 = 'xmlrates/'
 
 # try:
 #     from .local_settings import *

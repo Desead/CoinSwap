@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block header %}
-    <a class="nav-link" href="/">Главная</a>
-    <a class="nav-link" href="/rules/">Правила</a>
-    {#    <a class="nav-link" href="/faq/">Вопросы</a>#}
-    <a class="nav-link active" href="/contacts/">Контакты</a>
-    <a class="nav-link" href="/lk/">Вход</a>
+{% block description_for_page %}
+    'Описание для страницы'
+{% endblock %}
+{% block keywords_for_page %}
+    'Ключевые слова'
+{% endblock %}
+{% block title_for_page %}
+    Меняй смело! Контакты
 {% endblock %}
 
 {% block warning %}
@@ -17,11 +20,12 @@
 
         <div class="text-page">
             <ul>
-                <li>Время работы технической поддержки: 11:00 - 22:00 (МСК)</li>
+                <li>Время работы технической поддержки: {{ time }}</li>
                 <li>Почта:
-                    <a href="mailto:info@bitlab.work">{{ mail }}</a>
+                    <a href="mailto:{{ mail }}">{{ mail }}</a>
                 </li>
             </ul>
         </div>
     </div>
+    <script src="{% static 'js/contact.js' %}"></script>
 {% endblock %}

@@ -2,7 +2,6 @@
 // проверить ситуацию с таймерами если страницу закрыли а потом открыли, к примеру уже после окончания таймера
 // таймеры
 
-
 let logo;
 let pstype;
 let screen_code;
@@ -52,7 +51,7 @@ req.onload = function () {
     // в авторежиме это не надо
     // в ступенчатых обменах часть может быть ручной а часть автоматической.
 
-    for (let i of swap_options[left+'_'+right]){
+    for (let i of swap_options[left + '_' + right]) {
 
     }
     // for (let i of changeside) {

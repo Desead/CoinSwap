@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_template.html' %}
 {% load static %}
 
 {% block description_for_page %}
@@ -8,9 +8,11 @@
     'Ключевые слова'
 {% endblock %}
 {% block title_for_page %}
-    Меняй смело! Ордер не найден
+    Заголовок страницы
 {% endblock %}
-
 {% block warning %}
-    <h3>Заявка не найдена</h3>
+    варнинг страницы
+{% endblock %}
+{% block content %}
+    текст страницы
 {% endblock %}

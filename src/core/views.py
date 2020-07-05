@@ -116,6 +116,14 @@ class Rates(View):
         for i in money:
             for j in money:
                 if i == j:
+                    # rates[i.usedmoney + i.usedmoney] = [
+                    #     1,
+                    #     1,
+                    #     i.usedmoney,
+                    #     i.usedmoney,
+                    #     0,
+                    #     'Equal'
+                    # ]
                     continue
                 if i.usedmoney + j.usedmoney in rates:
                     continue
