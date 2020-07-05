@@ -21,6 +21,7 @@ from CoinSwap import settings
 urlpatterns = [
     path('clear/', include('src.clearingbd.urls')),
     path('core/', include('src.core.urls')),
+    path(settings.XML_RATES_SITE1, include('src.exportrates.urls')),
     path('api/', include('src.api.urls')),
     path('admin/', admin.site.urls),
     path('', include('src.frontend.urls')),

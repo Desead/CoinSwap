@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block header %}
-    <a class="nav-link" href="/">Главная</a>
-    <a class="nav-link" href="/rules/">Правила</a>
-{#    <a class="nav-link" href="/faq/">Вопросы</a>#}
-    <a class="nav-link" href="/contacts/">Контакты</a>
-    <a class="nav-link" href="/lk/">Вход</a>
+{% block description_for_page %}
+    'Описание для страницы'
+{% endblock %}
+{% block keywords_for_page %}
+    'Ключевые слова'
+{% endblock %}
+{% block title_for_page %}
+    Меняй смело! Подтверждение
 {% endblock %}
 
 {% block warning %}
@@ -80,9 +82,10 @@
             До отмены заявки осталось:
         </div>
         <div class="sol">
-            <form action="check/" class="solbtn">
+            <form action="change/" class="solbtn" method="post">
+                {% csrf_token %}
                 <input type="submit" value="Отменить" name="solution" class="sbtn no" id="nobtn">
-                <input type="submit" value="Я оплатил" name="solution" class="sbtn ok nodisplay" id="okbtn">
+                <input type="submit" value="Я оплатил" name="solution" class="sbtn ok" id="okbtn">
             </form>
         </div>
     </div>

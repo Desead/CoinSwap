@@ -1,10 +1,9 @@
 from django.contrib import admin
 
-from src.core.models import PaySystemModel, UsedMoneyModel, SiteModel, MoneyTypeModel, ExchangeSettings, CityModel, \
+from src.core.models import PaySystemModel, UsedMoneyModel, SiteModel, MoneyTypeModel, CityModel, \
     WalletsModel
 
 admin.site.register(UsedMoneyModel)
-admin.site.register(ExchangeSettings)
 admin.site.register(CityModel)
 
 
@@ -22,7 +21,7 @@ class WalletsModelAdmin(admin.ModelAdmin):
 
 @admin.register(MoneyTypeModel)
 class MoneyTypeModelAdmin(admin.ModelAdmin):
-    list_display = ('moneytype', 'freeze', 'freeze_confirm', 'description')
+    list_display = ('moneytype', 'description', 'freeze', 'freeze_confirm')
     list_editable = ('freeze', 'freeze_confirm')
     list_display_links = ('moneytype',)
     list_filter = ['freeze']

@@ -44,6 +44,9 @@ class Binance(RatesBase):
 class AllRates(RatesBase):
     source = models.CharField(max_length=20, verbose_name='Источник получения')
 
+    def __str__(self):
+        return self.base+' -> '+self.profit
+
     class Meta:
         verbose_name = 'валюта'
         verbose_name_plural = 'Курсы обменов: все'
