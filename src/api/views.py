@@ -40,7 +40,8 @@ def JsonView(request):
                 i.pay_from.reserve < i.pay_from.max_balance)
         b['swap_options'][name_swap][count_swap]['manual'] = i.manual
         if not i.manual:
-            if ((len(i.pay_from.code) >= 7) and i.pay_from.code.startswith('CASH')) or ((len(i.pay_to.code) >= 7) and i.pay_to.code.startswith('CASH')):
+            if ((len(i.pay_from.code) >= 7) and i.pay_from.code.startswith('CASH')) or (
+                    (len(i.pay_to.code) >= 7) and i.pay_to.code.startswith('CASH')):
                 b['swap_options'][name_swap][count_swap]['manual'] = True
 
         b['swap_options'][name_swap][count_swap]['juridical'] = i.juridical
@@ -62,18 +63,10 @@ def JsonView(request):
         b['swap_options'][name_swap][count_swap]['test_num'] = i.pk
 
         # получаем курс обмена
-        base_money = i.pay_from.usedmoney.usedmoney
-        profit_money = i.pay_to.usedmoney.usedmoney
-        # todo постоянное обращение к таблице курсов надо заменить на разовое
-
-        if base_money == profit_money:
-            b['swap_options'][name_swap][count_swap]['rate_from'] = 1
-            b['swap_options'][name_swap][count_swap]['rate_to'] = 1
-        else:
-            b['swap_options'][name_swap][count_swap]['rate_from'] = rates.get(base=base_money,
-                                                                              profit=profit_money).nominal_1
-            b['swap_options'][name_swap][count_swap]['rate_to'] = rates.get(base=base_money,
-                                                                            profit=profit_money).nominal_2
+        b['swap_options'][name_swap][count_swap]['rate_from'] = rates.get(base=i.pay_from.usedmoney.usedmoney,
+                                                                          profit=i.pay_to.usedmoney.usedmoney).nominal_1
+        b['swap_options'][name_swap][count_swap]['rate_to'] = rates.get(base=i.pay_from.usedmoney.usedmoney,
+                                                                        profit=i.pay_to.usedmoney.usedmoney).nominal_2
 
     for i in change:
         # отдаём место платёжки. для сортировки
@@ -82,10 +75,10 @@ def JsonView(request):
 
         # отдаём комиссии платёжной системы
         b['ps_fee_to'][i.pay_to.code] = {}
-        b['ps_fee_to'][i.pay_to.code]['fee'] = i.pay_to.fee
-        b['ps_fee_to'][i.pay_to.code]['fee_fix'] = i.pay_to.fee_fix
-        b['ps_fee_to'][i.pay_to.code]['fee_min'] = i.pay_to.fee_min
-        b['ps_fee_to'][i.pay_to.code]['fee_max'] = min(i.pay_to.fee_max, i.pay_to.reserve_for_site)
+        # b['ps_fee_to'][i.pay_to.code]['fee'] = i.pay_to.fee
+        # b['ps_fee_to'][i.pay_to.code]['fee_fix'] = i.pay_to.fee_fix
+        # b['ps_fee_to'][i.pay_to.code]['fee_min'] = i.pay_to.fee_min
+        # b['ps_fee_to'][i.pay_to.code]['fee_max'] = min(i.pay_to.fee_max, i.pay_to.reserve_for_site)
         b['ps_fee_to'][i.pay_to.code]['reserve'] = i.pay_to.reserve_for_site
 
         # передаём связь кода валют с отображением на сайте.

@@ -18,8 +18,8 @@ let sort_from;
 let sort_to;
 let ps_fee_to;
 
-let left_money_type;
-let right_money_type;
+// let left_money_type;
+// let right_money_type;
 
 //вначале всегда читаем endpoint
 let req = new XMLHttpRequest();

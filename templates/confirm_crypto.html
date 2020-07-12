@@ -12,8 +12,10 @@
 {% endblock %}
 
 {% block warning %}
-    Курс обмена заморожен на {{ type_freeze }} минут. <br>
-    Если заявка не будет оплачена, она автоматически отменится.
+    Курс обмена заморожен на {{ type_freeze }} минут. Если за это время заявка попадёт в сеть, то фиксация курса
+    увеличится ещё на {{ type_freeze_confirm }} минут.
+    <br>В другом случае сервис оставляет за собой право произвести обмен по курсу, актуальному на момент совершения
+    обмена.
 {% endblock %}
 
 {% block content %}
@@ -27,9 +29,11 @@
                 <div class="orderDate" id="cnf-date" title="Используется время UTC">
                     Время оформления: {{ date_create }}
                 </div>
+
                 <div class="orderStatus" id="cnf-status">
                     Статус: {{ status }}
                 </div>
+
             </div>
             <div class="cnf-right wd">
                 <div class="psFrom" id="cnf-from">
@@ -64,7 +68,6 @@
             <form action="change/" class="solbtn" method="post">
                 {% csrf_token %}
                 <input type="submit" value="Отменить" name="solution" class="sbtn no" id="nobtn">
-                <input type="submit" value="Оплатить" name="solution" class="sbtn ok" id="okbtn">
             </form>
         </div>
     </div>

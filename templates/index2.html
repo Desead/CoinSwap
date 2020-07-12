@@ -2,20 +2,20 @@
 {% load static %}
 
 {% block description_for_page %}
-    '{{ description }}'
+    'Описание для страницы'
 {% endblock %}
 {% block keywords_for_page %}
-    '{{ keywords }}'
+    'Ключевые слова'
 {% endblock %}
 {% block title_for_page %}
-    {{ title }}
+    Меняй смело!
 {% endblock %}
-{% block tohead %}
-    <script src="{% static 'js/func.js' %}"></script>
-    <script src="{% static 'js/main.js' %}"></script>
-{% endblock %}
+
 {% block warning %}
-    {{ banner }}
+    Безопасный обмен <br>
+    Обменник полностью автоматический, работает круглосуточно. Информация о заявке отправляется на указанную
+    электронную почту. Сообщать оператору об оплате не нужно. Если считаете, что заявка зависла, попробуйте
+    просто обновить страницу - нажмите F5
 {% endblock %}
 
 {% block content %}
@@ -48,7 +48,6 @@
             Последние обмены
         </div>
         <div class="change-dn news">
-            {{ order }}
         </div>
         <div class="change-up">
             Наши партнёры
@@ -205,4 +204,6 @@
         </div>
     </template>
 
+    <script src="{% static 'js/func.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
 {% endblock %}

@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils.timezone import now
 from django.views.generic.base import View
@@ -9,18 +10,29 @@ from src.parsers.models import AllRates
 
 
 class StartView(View):
-    context = {}
 
     def get(self, request):
-        # todo можно проверить платёжки на их наличие и если их нету выдать 404
-        temp = SiteModel.objects.filter(url__icontains=request.headers['Host'])
-        if temp.count == 1:
-            temp = temp[0].news
-        else:
-            temp = ''
-        self.context['news'] = temp
-        # return render(request, 'start_page.html', self.context)
-        return render(request, 'index.html', self.context)
+
+        queryset_site = SiteModel.objects.filter(url__icontains=request.headers['Host'])
+        if queryset_site.count() != 1:
+            return HttpResponse('Сайт не найден')
+
+        queryset_order = OrderModel.objects.filter(site__url__icontains=request.headers['Host'], status='ok')[:3]
+        queryset_site = queryset_site[0]
+        context = {}
+
+        if queryset_site.technical_work:
+            context['text'] = queryset_site.technical_text
+            return render(request, 'pause.html', context)
+
+        context['description'] = queryset_site.description_text
+        context['keywords'] = queryset_site.keywords_text
+        context['title'] = queryset_site.title_text
+        context['banner'] = queryset_site.banner
+        context['news'] = queryset_site.news
+        context['order'] = queryset_order[0].num
+
+        return render(request, 'index.html', context)
 
 
 class RulesView(View):
@@ -29,21 +41,14 @@ class RulesView(View):
         return render(request, 'rules.html', context)
 
 
-class ChangeView(View):
-    context = {}
-
-    def get(self, request, left, right, idfromsite):
-        print('Меняем ? get')
-        return render(request, 'change.html', self.context)
-
-    def post(self, request, left, right, idfromsite):
-        temp = request.POST
-        if temp == 'Отменить':
-            print('Отменить заявку')
-        else:
-            pass
-
-        return render(request, 'change.html', self.context)
+class ContactView(View):
+    def get(self, request):
+        temp = SiteModel.objects.filter(url__icontains=request.headers['Host'])
+        context = {}
+        if temp.count() == 1:
+            context = {'mail': temp[0].mail,
+                       'time': temp[0].working}
+        return render(request, 'contacts.html', context)
 
 
 class ConfirmView(View):
@@ -53,7 +58,9 @@ class ConfirmView(View):
     102 - Указанный статус заявки отсутствует
     103 - нет параметра test_num. значит не вызывалась js функция rates.
     104 - test_num не число
-    105,106 - полученный код платёжки состоит не только из заглавных букв
+    105,106 - полученный код платёжки не найден
+    1050,1060 - Платёжки не активны
+    1061 - С платёжки нельзя отдавать
     107 - uuid странный
     108,109 - отдаваемая, получаемая сумма <= 0
     110 - неверный sumlock
@@ -62,19 +69,20 @@ class ConfirmView(View):
     113 - неверная почта
     115,114 - клиентом указаны неверные кошельки
     116 - что то не так с дополнительным полем для крипты
-    117 - не найден курс обмена по бозовым валютам из таблицы всех курсов
+    117 -
+    118 - не попали в мин\макс
     """
 
-    # todo сраницу order_not_found сделать более информативной ?
     context = {}
+
+    # todo если в action вставили другие платёжки, которые тоже есть?
 
     # берём данные заявки из бд и заполняем их в словарь для вывода
     def get_order_for_bd(self, request, left, right, idfromsite):
-        # print(request.POST.get)
 
         order_model = OrderModel.objects.filter(numuuid=idfromsite, pay_from__code=left, pay_to__code=right)
         if order_model.count() != 1:
-            return False
+            return False,
         order_model = order_model[0]
 
         # Узнаём название статуса заявки
@@ -98,15 +106,47 @@ class ConfirmView(View):
                         'text': order_model.text,
                         'status': order_status,
                         }
-        return True
+        return True, order_model.status, order_model.num
+
+    # проверяем данные переданные в адресной строке
+    def check_adress_data(self, request, left, right, idfromsite, queryset):
+
+        # проверили наличие плаёжки и разршение их использования
+        temp = queryset.filter(code=left)
+        if temp.count() != 1:
+            return False, '105'
+        if not temp.active:
+            return False, '1050'
+
+        temp = queryset.filter(code=right)
+        if temp.count() != 1:
+            return False, '106'
+        if not temp.active:
+            return False, '1060'
+        if not temp.active_out:
+            return False, '1061'
+
+        if addfunc.check_uuid(idfromsite) == '':
+            return False, '107'
+
+        return True,
 
     def get(self, request, left, right, idfromsite):
-        if self.get_order_for_bd(request, left, right, idfromsite):
+        temp = self.get_order_for_bd(request, left, right, idfromsite)
+        if temp[0]:
+            if temp[1] == 'cancel':
+                return render(request, 'cancel.html', {'order_num': temp[2]})
             return render(request, 'confirm.html', self.context)
         else:
             return render(request, 'order_not_found.html')
 
     def post(self, request, left, right, idfromsite):
+
+        queryset_PaySystemModel = PaySystemModel.objects.all()
+        temp = self.check_adress_data(request, left, right, idfromsite, queryset_PaySystemModel)
+        if temp[0] == False:
+            return render(request, 'error.html', {'error': 'Что то пошло не так. Код ошибки: ' + temp[1]})
+
         # проверим то что пришло в адресной строке: left, right, idfromsite
         if addfunc.check_pscode(left) == '':
             return render(request, 'error.html', {'error': 'Что то пошло не так. Код ошибки: 105'})
@@ -176,27 +216,24 @@ class ConfirmView(View):
 
         order_model = OrderModel.objects.filter(numuuid=idfromsite, pay_from__code=left, pay_to__code=right)
 
-        # проверем корректность сумм для обменаю Всё пересчитываем
+        # проверем корректность сумм для обмена Всё пересчитываем
 
-        rates = AllRates.objects.filter(base=change.pay_from.usedmoney.usedmoney,
-                                        profit=change.pay_to.usedmoney.usedmoney)
-
-        # todo вставить проверку рассчитанных и получаемых цифр на выход за мин и макс
-        if rates.count() != 1:
-            return render(request, 'error.html', {'error': 'Что то пошло не так. Код ошибки: 117'})
-
-        rates = rates[0]
+        rates = AllRates.objects.all()
 
         if sumlock == 'sumtolock':
             temp = (sum_to + change.fee_fix + fee_client) * 100 / (100 - change.fee)
             temp = round(temp - sum_to, 8 if change.pay_to.moneytype.moneytype == 'crypto' else 2)
             temp = max(temp, change.fee_min)
             temp = temp + sum_to
-            sum_from = round(temp * rates.nominal_1 / rates.nominal_2,
+            sum_from = round(temp * rates.get(base=change.pay_from.usedmoney.usedmoney,
+                                              profit=change.pay_to.usedmoney.usedmoney).nominal_1 / rates.get(
+                base=change.pay_from.usedmoney.usedmoney, profit=change.pay_to.usedmoney.usedmoney).nominal_2,
                              8 if change.pay_from.moneytype.moneytype == 'crypto' else 2)
         else:
             # посчитали сумму которую нужно отдать просто по курсу обмена
-            out_money = round(sum_from * rates.nominal_2 / rates.nominal_1,
+            out_money = round(sum_from * rates.get(base=change.pay_from.usedmoney.usedmoney,
+                                                   profit=change.pay_to.usedmoney.usedmoney).nominal_2 / rates.get(
+                base=change.pay_from.usedmoney.usedmoney, profit=change.pay_to.usedmoney.usedmoney).nominal_1,
                               8 if change.pay_to.moneytype.moneytype == 'crypto' else 2)
 
             # отдельно считаем комиссию за обмен
@@ -210,41 +247,107 @@ class ConfirmView(View):
             sum_to = round(max(out_money - fee - fee_client, 0),
                            8 if change.pay_to.moneytype.moneytype == 'crypto' else 2)
 
+        # проверяем полученные суммы обмена на попадание в границы мин и макс
+        if (sum_from < change.pay_from_min) or (sum_from > change.pay_from_max) or (sum_to < change.pay_to_min) or (
+                sum_to > change.pay_to_max):
+            return render(request, 'error.html', {'error': 'Что то пошло не так. Код ошибки: 118'})
+
         if not order_model.exists():  # если такой записи нет то создаём её
             order = OrderModel()
             order.sum_from = sum_from
             order.sum_to = sum_to
             order.wallet_client_from = wallet_client_from
             order.wallet_client_to = wallet_client_to
-            order.wallet_add = wallet_add
-            order.fee_client = fee_client
-            order.lock = sumlock
-            order.pay_from = PaySystemModel.objects.get(code=left)
-            order.pay_to = PaySystemModel.objects.get(code=right)
             order.wallet_exchange_to = wallet_client_from
             order.wallet_exchange_from = wallet_client_to
-            # todo не работает выбор пользователя
+            order.wallet_add = wallet_add
+            order.fee_client = fee_client
+            order.lock = 'to' if sumlock == 'sumtolock' else 'from'
+            order.pay_from = PaySystemModel.objects.get(code=left)
+            order.pay_to = PaySystemModel.objects.get(code=right)
+            # todo не работает выбор пользователя и сайта
             order.client = list(User.objects.all())[0]
             order.num = 100 + OrderModel.objects.all().count()
-            # todo не работает выбор сайта
+            # order.site = SiteModel.objects.filter(url__icontains=request.headers['Host'])
             order.site = list(SiteModel.objects.all())[0]
-            order.data_create = now()
-            order.data_change = now()
+            order.data_create = order.data_change = now()
             order.numuuid = idfromsite
             order.text = text
-            order.save()
+            order.url_change = request.headers['Origin'] + '/' + left + '/' + right + '/' + idfromsite + '/'
 
-        if self.get_order_for_bd(request, left, right, idfromsite):
+            order.sum_from_rub = round(
+                sum_from * rates.get(base=change.pay_from.usedmoney.usedmoney, profit='RUB').nominal_2 / rates.get(
+                    base=change.pay_from.usedmoney.usedmoney, profit='RUB').nominal_1, 2)
+            order.sum_to_rub = round(
+                sum_to * rates.get(base='RUB', profit=change.pay_to.usedmoney.usedmoney).nominal_1 / rates.get(
+                    base='RUB', profit=change.pay_to.usedmoney.usedmoney).nominal_2, 2)
+            order.fee = change.fee
+            order.profit_rub = round(order.sum_from_rub - order.sum_to_rub, 2)
+
+            order.rate = rates.get(base=change.pay_from.usedmoney.usedmoney, profit=change.pay_to.usedmoney.usedmoney)
+            # это не прибыль, так как здесь ещё включены комиссии
+            order.profit = round(sum_from * rates.get(base=change.pay_from.usedmoney.usedmoney,
+                                                      profit=change.pay_to.usedmoney.usedmoney).nominal_2 / rates.get(
+                base=change.pay_from.usedmoney.usedmoney, profit=change.pay_to.usedmoney.usedmoney).nominal_1 - sum_to,
+                                 8 if change.pay_to.moneytype.moneytype == 'crypto' else 2)
+            '''
+            partner
+            partner_rub
+            rate_best
+            rate_cb
+            '''
+            order.save()
+        else:
+            if order_model[0].status == 'cancel':
+                return render(request, 'cancel.html', {'order_num': order_model[0].num})
+
+        if self.get_order_for_bd(request, left, right, idfromsite)[0]:
+            if change.pay_from.moneytype.moneytype == 'crypto':
+                return render(request, 'confirm_crypto.html', self.context)
             return render(request, 'confirm.html', self.context)
         else:
             return render(request, 'order_not_found.html')
 
 
-class ContactView(View):
-    def get(self, request):
-        temp = SiteModel.objects.filter(url__icontains=request.headers['Host'])
-        context = {}
-        if temp.count == 1:
-            context = {'mail': temp[0].mail,
-                       'time': temp[0].working}
-        return render(request, 'contacts.html', context)
+class ChangeView(View):
+    context = {}
+
+    def CancelChange(self):
+        pass
+
+    def get(self, request, left, right, idfromsite):
+        print('Меняем ? get')
+        order_model = OrderModel.objects.filter(numuuid=idfromsite, pay_from__code=left, pay_to__code=right)
+        if order_model.count() != 1:
+            return render(request, 'order_not_found.html', self.context)
+        order_model = order_model[0]
+        if order_model.status == 'cancel':
+            return render(request, 'cancel.html', {'order_num': order_model.num})
+
+        # temp = request.POST['solution']
+        # if temp == 'Оплатить':
+        #     print('Оплатить заявку')
+        # else:  # отменть заявку
+        #     # order_model.status = 'cancel'
+        #     # order_model.data_change = now()
+        #     # order_model.save()
+        #     return render(request, 'cancel.html', {'order_num': order_model.num})
+
+        return render(request, 'change.html', self.context)
+
+    def post(self, request, left, right, idfromsite):
+        order_model = OrderModel.objects.filter(numuuid=idfromsite, pay_from__code=left, pay_to__code=right)
+        if order_model.count() != 1:
+            return render(request, 'order_not_found.html', self.context)
+        order_model = order_model[0]
+
+        temp = request.POST['solution']
+        if temp == 'Оплатить':
+            print('Оплатить заявку')
+        else:  # отменть заявку
+            order_model.status = 'cancel'
+            order_model.data_change = now()
+            order_model.save()
+            return render(request, 'cancel.html', {'order_num': order_model.num})
+
+        return render(request, 'change.html', self.context)

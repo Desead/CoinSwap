@@ -50,10 +50,10 @@ def xmlrts(request):
             amount_element = xml.SubElement(item_element, 'amount')
             amount_element.text = str(i.pay_to.reserve_for_site)
 
-            temp = i.pay_to.fee_min
-            if temp != 0:
-                minfee_element = xml.SubElement(item_element, 'minfee')
-                minfee_element.text = str(temp) + ' ' + i.pay_to.usedmoney.usedmoney
+            # temp = i.pay_to.fee_min
+            # if temp != 0:
+            #     minfee_element = xml.SubElement(item_element, 'minfee')
+            #     minfee_element.text = str(temp) + ' ' + i.pay_to.usedmoney.usedmoney
 
             # fromfee_element = xml.SubElement(item_element, 'fromfee')
             # fromfee_element.text = '330'

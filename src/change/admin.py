@@ -8,10 +8,30 @@ from src.core.models import PaySystemModel
 
 @admin.register(OrderModel)
 class OrderModelAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('Общая информация о заявке',
+         {'fields': ['status', 'site', 'url_change','num', 'numuuid', 'data_create', 'data_change']}),
+        ('Клиент перевёл', {'fields': ['pay_from', 'sum_from', 'sum_from_rub', ]}),
+        ('Клиент получил', {'fields': ['pay_to', 'sum_to', 'sum_to_rub', ]}),
+        ('Расчёты',
+         {'fields': ['rate', 'rate_best', 'rate_cb', 'fee', 'profit', 'profit_rub', 'partner', 'partner_rub', ]}),
+        ('Кошельки', {'fields': ['wallet_client_from', 'wallet_client_to', 'wallet_exchange_to', 'wallet_exchange_from',
+                                 'wallet_add', ]}),
+        ('Остатки', {'fields': ['client', 'lock', 'text', 'description', ]}),
+    ]
     list_display = ('num', 'status', 'pay_from', 'pay_to', 'sum_from', 'sum_to', 'data_create')
+    list_display_links = ('num', 'status',)
     list_filter = ['status']
-    # readonly_fields = (
-    # 'site', 'num', 'numuuid', 'data_create', 'data_change', 'pay_from', 'pay_to', 'sum_from', 'sum_to', 'wallet_add',)
+    readonly_fields = (
+        'site', 'num', 'numuuid', 'data_create', 'data_change', 'pay_from', 'sum_from', 'sum_from_rub', 'pay_to',
+        'sum_to', 'sum_to_rub', 'wallet_add',
+        'fee', 'rate', 'rate_best', 'rate_cb',
+        'profit', 'profit_rub','url_change',
+        'partner', 'partner_rub',
+        'fee_client', 'wallet_client_from', 'wallet_exchange_to', 'wallet_exchange_from', 'wallet_client_to',
+        'client', 'lock', 'text')
+
+    save_on_top = True
 
 
 @admin.register(ChangeModel)

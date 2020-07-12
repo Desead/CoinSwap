@@ -22,10 +22,11 @@ urlpatterns = [
     path('clear/', include('src.clearingbd.urls')),
     path('core/', include('src.core.urls')),
     path(settings.XML_RATES_SITE1, include('src.exportrates.urls')),
-    path('api/', include('src.api.urls')),
-    path('admin/', admin.site.urls),
+    path(settings.API_SITE1, include('src.api.urls')),
+    path(settings.ADMIN_SITE1, admin.site.urls),
     path('', include('src.frontend.urls')),
 ]
 
 # if settings.DEBUG:
 #     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

@@ -16,11 +16,23 @@ let req = new XMLHttpRequest();
 req.open('GET', '/api/');
 req.send();
 
+
 req.onload = function () {
     if (req.status !== 200) {
         console.log('Ошибка доступа')
         return
     }
+
+    // let temp = document.querySelector('#cnf-status')
+    // if (temp) {
+    //     if (temp.innerText.indexOf('Новая') < 0) {
+    //         document.querySelector('.solbtn').remove()
+    //         document.querySelector('#cnf-cancel').remove()
+    //         return
+    //     }
+    //
+    // }
+
 
     logo = JSON.parse(req.response)['img']
     pstype = JSON.parse(req.response)['pstype']
@@ -51,25 +63,6 @@ req.onload = function () {
     // в авторежиме это не надо
     // в ступенчатых обменах часть может быть ручной а часть автоматической.
 
-    for (let i of swap_options[left + '_' + right]) {
-
-    }
-    // for (let i of changeside) {
-    //     if (i[0] === left) {
-    //         for (let j of i) {
-    //             if (j[0] === right) {
-    //                 if (j[2]) { // ручной обмен!
-    //                     document.querySelector('#okbtn').classList.remove('nodisplay');
-    //                 } else { // автообмен
-    //                     document.querySelector('#okbtn').remove();
-    //                     document.querySelector('.wallet-manual').remove();
-    //                 }
-    //                 break;
-    //             }
-    //         }
-    //         break;
-    //     }
-    // }
 }
 
 
