@@ -2,18 +2,17 @@
 {% load static %}
 
 {% block description_for_page %}
-    'Описание для страницы'
+    '{{ description_text }}'
 {% endblock %}
 {% block keywords_for_page %}
-    'Ключевые слова'
+    '{{ keywords_text }}'
 {% endblock %}
 {% block title_for_page %}
-    Меняй смело! Подтверждение
+    {{ title_text }}
 {% endblock %}
 
 {% block warning %}
-    Курс обмена заморожен на {{ type_freeze }} минут. <br>
-    Если заявка не будет оплачена, она автоматически отменится.
+    {{ confirm_text }}
 {% endblock %}
 
 {% block content %}

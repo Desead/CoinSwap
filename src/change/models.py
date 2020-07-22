@@ -49,10 +49,12 @@ class OrderModel(models.Model):
     wallet_exchange_to = models.CharField('Кошелёк на который обменник получает', max_length=50, default='')
     wallet_add = models.CharField(max_length=50, verbose_name='Доп.поле для крипты', blank=True)
     # client = models.ForeignKey(RegisteredUserModel, on_delete=models.SET_NULL, null=True, blank=True, default='')
-    text = models.TextField(verbose_name='Выводимый текст для ручной заявки', blank=True)
+    confirm_text = models.TextField('Текст на страницу подтверждения для начала обмена', default='Подтвердите данные')
+    description_text = models.TextField('Тэг страницы: description', default='Безопасный обмен денег')
+    keywords_text = models.TextField('Тэг страницы: keywords', default='qiwi, btc, ltc, usd')
+    title_text = models.TextField('Тэг страницы: title', default='Обменник')
     description = models.TextField(blank=True, verbose_name='Комментарий. Для себя')
     url_change = models.URLField('Ссылка на заявку', default='')
-
 
     def __str__(self):
         return str(self.num) + ': ' + self.pay_from.screen + ' -> ' + self.pay_to.screen
@@ -80,8 +82,7 @@ class ChangeModel(models.Model):
                                    help_text=' Значение больше 0')
     pay_to_max = models.FloatField(verbose_name='Макс', default=0, validators=[validate_more_zero],
                                    help_text=' Значение больше 0')
-    # если ставить сюда связь с обменным курсом то при обновлении таблицы курсов, здесь всё может сбиться
-    # rate_base = models.ForeignKey(AllRates, on_delete=models.CASCADE, verbose_name='Курс обмена')
+
     fee = models.FloatField(verbose_name='Комиссия за обмен в %', default=0, help_text='Может быть отрицательной')
     fee_fix = models.FloatField(verbose_name='Фиксированная комиссия', default=0, help_text='В отдаваемой валюте >=0',
                                 validators=[validate_zero])
@@ -90,8 +91,12 @@ class ChangeModel(models.Model):
                                 validators=[validate_zero])
     fee_max = models.FloatField(verbose_name='Максимальная комиссия', default=0, help_text='В отдаваемой валюте >=0',
                                 validators=[validate_zero])
+
+
     city_change = models.ForeignKey(CityModel, on_delete=models.CASCADE, verbose_name='Город обмена наличных',
                                     null=True, blank=True, help_text='Актуально только для наличных расчётов')
+
+
     active = models.BooleanField(default=False, verbose_name='Активно')
     dinamic_fee = models.BooleanField(default=True, verbose_name='Динамическая маржа')
     manual = models.BooleanField(default=False, verbose_name='Ручной обмен', help_text='Наличные расчёты всегда ручные')
@@ -103,7 +108,11 @@ class ChangeModel(models.Model):
     otherout = models.BooleanField(default=False, verbose_name='Выплата со сторонней пс')
     reg = models.BooleanField(default=False, verbose_name='Регистрация')
     card2card = models.BooleanField(default=False, verbose_name='Перевод на карту')
-    text = models.TextField(verbose_name='Текст на сайт для ручного обмена', blank=True)
+    confirm_text = models.TextField('Текст на страницу подтверждения для начала обмена',
+                                    default='Курс обмена зафиксирован на 15 минут. После 15 минут обмен может быть произведён по курсу, актуальному на момент обработки заявки')
+    description_text = models.TextField('Тэг страницы: description', default='Безопасный обмен денег')
+    keywords_text = models.TextField('Тэг страницы: keywords', default='qiwi, btc, ltc, usd')
+    title_text = models.TextField('Тэг страницы: title', default='Меняй смело!')
     description = models.CharField(max_length=255, blank=True, verbose_name='Комментарий. Для себя')
 
     def __str__(self):

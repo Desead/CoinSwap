@@ -80,7 +80,7 @@ class SiteModel(models.Model):
     news = models.TextField('Новость на главную', default='Новость на главной сайта')
     banner = models.TextField('Текст в баннер на главную', default='Сообщение в баннер')
     technical_text = models.TextField('Текст на сайт во время тех.работ', default='Ведутся технические работы')
-    confirm_text = models.TextField('Текст на страницу подтверждения для начала обмена', default='Подтвердите данные')
+    # confirm_text = models.TextField('Текст на страницу подтверждения для начала обмена', default='Подтвердите данные')
     description_text = models.TextField('Тэг страницы: description', default='Безопасный обмен денег')
     keywords_text = models.TextField('Тэг страницы: keywords', default='qiwi, btc, ltc, usd')
     title_text = models.TextField('Тэг страницы: title', default='Обменник')
@@ -112,7 +112,6 @@ class CityModel(models.Model):
 # todo пока не решён впрос принадлежности кошельков сайтам. Всё используется везде или лучше дать доп.поле сайт?
 # todo уникальность номера кошелька надо проверять внутри платёжки а не по всей базе кошельков
 class WalletsModel(models.Model):
-    #test
     lock = models.BooleanField(default=False, verbose_name='Заблокирован')
     description = models.CharField(max_length=255, blank=True, verbose_name='Комментарий. Для себя')
     pay = models.ForeignKey(PaySystemModel, on_delete=models.CASCADE, verbose_name='Платёжная система')
