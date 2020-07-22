@@ -1,7 +1,6 @@
 def str2float(temp: str) -> float:
-    temp = temp.replace(',', '.')
     try:
-        return float(temp)
+        return float(temp.replace(',', '.'))
     except:
         return 0
 
@@ -13,9 +12,12 @@ def str2int(temp: str) -> int:
         return 0
 
 
-def check_pscode(temp) -> str:
-    # часть проверок стоит в урл. Надо ли что то ещё ставить?
-    return temp
+def test_phone(temp: str) -> int:
+    x = str2int(temp)
+    if x > 0:
+        if (len(temp) < 9) or (len(temp) > 16):
+            return 0
+    return x
 
 
 def check_uuid(temp) -> str:
@@ -41,18 +43,24 @@ def check_uuid(temp) -> str:
 
 
 def check_sumlock(temp) -> str:
-    if (temp == 'sumfromlock') or (temp == 'sumtolock'):
+    if temp == 'sumtolock':
         return temp
-    else:
-        return ''
+    return 'sumfromlock'
 
 
 def check_mail(temp) -> str:
     if ('@' not in temp):
         return ''
-    if ('.' not in temp):
+    if (len(temp) > 40):
         return ''
-    if (len(temp) > 30):
+    x = temp.split('@')
+    if len(x) != 2:
+        return ''
+    if len(x[0]) < 1 or len(x[0]) > 35:
+        return ''
+    if len(x[1]) < 4:
+        return ''
+    if ('.' not in x[1]):
         return ''
     return temp
 

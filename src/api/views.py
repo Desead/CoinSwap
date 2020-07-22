@@ -75,10 +75,6 @@ def JsonView(request):
 
         # отдаём комиссии платёжной системы
         b['ps_fee_to'][i.pay_to.code] = {}
-        # b['ps_fee_to'][i.pay_to.code]['fee'] = i.pay_to.fee
-        # b['ps_fee_to'][i.pay_to.code]['fee_fix'] = i.pay_to.fee_fix
-        # b['ps_fee_to'][i.pay_to.code]['fee_min'] = i.pay_to.fee_min
-        # b['ps_fee_to'][i.pay_to.code]['fee_max'] = min(i.pay_to.fee_max, i.pay_to.reserve_for_site)
         b['ps_fee_to'][i.pay_to.code]['reserve'] = i.pay_to.reserve_for_site
 
         # передаём связь кода валют с отображением на сайте.

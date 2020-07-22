@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from src.core.models import PaySystemModel, UsedMoneyModel, SiteModel, MoneyTypeModel, CityModel, \
-    WalletsModel
+    WalletsModel, RegisteredUserModel
 
 admin.site.register(UsedMoneyModel)
 admin.site.register(CityModel)
@@ -45,7 +45,13 @@ class PaySystemsAdmin(admin.ModelAdmin):
 
 @admin.register(SiteModel)
 class SitesAdmin(admin.ModelAdmin):
-    list_display = ('technical_work', 'name', 'url','working','mail')
+    list_display = ('technical_work', 'name', 'url', 'working', 'mail')
     list_display_links = ('name', 'url',)
     list_editable = ('technical_work',)
     save_on_top = True
+
+
+@admin.register(RegisteredUserModel)
+class RegisteredUserAdmin(admin.ModelAdmin):
+    list_display = ('user_name', 'user_site', 'user_mail')
+    readonly_fields = ('user_partner_id', 'user_partner_link')

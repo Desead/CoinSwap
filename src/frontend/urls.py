@@ -1,5 +1,5 @@
 from django.urls import path, re_path
-from .views import StartView, ConfirmView, ChangeView, ContactView, RulesView
+from .views import StartView, ConfirmView,  ContactView, RulesView
 
 # todo добавить регулряку для определения адреса вместо цикла как сейчас и ввода параметров cur_from и cur_to
 # todo confirm есйчас цепляет и много лишних адресов. Сделать так чтобы этого небыло

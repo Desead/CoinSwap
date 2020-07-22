@@ -112,6 +112,7 @@ class CityModel(models.Model):
 # todo пока не решён впрос принадлежности кошельков сайтам. Всё используется везде или лучше дать доп.поле сайт?
 # todo уникальность номера кошелька надо проверять внутри платёжки а не по всей базе кошельков
 class WalletsModel(models.Model):
+    #test
     lock = models.BooleanField(default=False, verbose_name='Заблокирован')
     description = models.CharField(max_length=255, blank=True, verbose_name='Комментарий. Для себя')
     pay = models.ForeignKey(PaySystemModel, on_delete=models.CASCADE, verbose_name='Платёжная система')
@@ -141,3 +142,24 @@ class WalletsModel(models.Model):
         verbose_name = 'Кошелёк'
         verbose_name_plural = '5.Кошельки'
         ordering = ('pay', 'name')
+
+
+# модель пользователя
+class RegisteredUserModel(models.Model):
+    user_site = models.ForeignKey(SiteModel, verbose_name='Сайт регистрации', on_delete=models.SET_NULL, null=True, blank=True)
+    user_name = models.CharField('Имя', max_length=50, default='user name')
+    user_mail = models.EmailField('Почта', default='user@user.ru')
+    user_password = models.CharField('Пароль', max_length=50, default='user password')
+    user_ip = models.CharField('IP пользователя', max_length=39, default='', blank=True)
+    user_create = models.DateTimeField('Дата регистрации', default=now)
+    user_discount = models.FloatField('Скидка пользователя', default=0)
+    user_partner_id = models.PositiveIntegerField('Партнёрский ID', default=0, validators=[validate_zero])
+    user_partner_link = models.URLField('Партнёрская ссылка', default='')
+    user_partner_fee = models.FloatField('Партнёрский %', default='10', validators=[validate_zero])
+
+    def __str__(self):
+        return self.user_name
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'

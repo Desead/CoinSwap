@@ -451,7 +451,8 @@ function mailFree() {
 // телефон должен быть более 10 символов
 function minPhone() {
     let temp = this.value;
-    if (temp.length < 11) this.value = ''
+    if (temp.length < 9) this.value = ''
+    if (temp.length > 16) this.value = ''
 }
 
 function uuidv4() {

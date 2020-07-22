@@ -1,7 +1,6 @@
-import uuid
 from django.db import models
 from django.utils.timezone import now
-from src.core.models import PaySystemModel, SiteModel, UsedMoneyModel, CityModel
+from src.core.models import PaySystemModel, SiteModel, UsedMoneyModel, CityModel, RegisteredUserModel
 from src.parsers.models import AllRates
 from django.contrib.auth.models import User
 from src.additions.validators import validate_zero, validate_more_zero
@@ -49,10 +48,11 @@ class OrderModel(models.Model):
     wallet_exchange_from = models.CharField('Кошелёк с которого обменник отдаёт', max_length=50, default='')
     wallet_exchange_to = models.CharField('Кошелёк на который обменник получает', max_length=50, default='')
     wallet_add = models.CharField(max_length=50, verbose_name='Доп.поле для крипты', blank=True)
-    client = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Клиент')
+    # client = models.ForeignKey(RegisteredUserModel, on_delete=models.SET_NULL, null=True, blank=True, default='')
     text = models.TextField(verbose_name='Выводимый текст для ручной заявки', blank=True)
     description = models.TextField(blank=True, verbose_name='Комментарий. Для себя')
     url_change = models.URLField('Ссылка на заявку', default='')
+
 
     def __str__(self):
         return str(self.num) + ': ' + self.pay_from.screen + ' -> ' + self.pay_to.screen
