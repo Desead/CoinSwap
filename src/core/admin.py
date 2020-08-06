@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from src.core.models import PaySystemModel, UsedMoneyModel, SiteModel, MoneyTypeModel, CityModel, \
-    WalletsModel
+    WalletsModel, RegisteredUserModel
 
 admin.site.register(UsedMoneyModel)
 admin.site.register(CityModel)
@@ -15,8 +15,13 @@ class WalletsModelAdmin(admin.ModelAdmin):
             kwargs["queryset"] = PaySystemModel.objects.filter(active=True)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
-    list_display = ('pay', 'name', 'count_in', 'count_out', 'max_trans', 'max_balance', 'date')
+    # todo как поставить в фильтр только те платёжи которые активны
+    # list_filter = ('pay',)
+    list_display = ('pay', 'name', 'count_in', 'count_out', 'max_trans', 'balance', 'date',)
+    readonly_fields = ('money_in', 'money_in_rub', 'money_out', 'money_out_rub')
     save_as = True
+    save_on_top = True
+    save_as_continue = True
 
 
 @admin.register(MoneyTypeModel)
@@ -30,16 +35,23 @@ class MoneyTypeModelAdmin(admin.ModelAdmin):
 @admin.register(PaySystemModel)
 class PaySystemsAdmin(admin.ModelAdmin):
     list_display = (
-        'screen', 'code', 'idbest', 'active', 'moneytype', 'usedmoney', 'max_balance', 'reserve', 'reserve_for_site',
-        'fee', 'fee_fix',
-        'fee_min', 'fee_max', 'url')
+        'idbest', 'active', 'screen', 'code', 'usedmoney', 'moneytype', 'max_balance', 'reserve', 'reserve_for_site')
     list_display_links = ('screen', 'code', 'moneytype', 'usedmoney', 'idbest')
     list_filter = ('active', 'moneytype', 'usedmoney')
-    list_editable = ('active', 'max_balance', 'reserve', 'fee', 'fee_fix', 'fee_min', 'fee_max', 'reserve_for_site')
+    list_editable = ('active', 'max_balance', 'reserve', 'reserve_for_site')
     search_fields = ('code', 'screen')
     save_on_top = True
 
 
 @admin.register(SiteModel)
 class SitesAdmin(admin.ModelAdmin):
-    list_display = ('name', 'url',)
+    list_display = ('technical_work', 'name', 'url', 'working', 'mail')
+    list_display_links = ('name', 'url',)
+    list_editable = ('technical_work',)
+    save_on_top = True
+
+
+@admin.register(RegisteredUserModel)
+class RegisteredUserAdmin(admin.ModelAdmin):
+    list_display = ('user_name', 'user_site', 'user_mail')
+    readonly_fields = ('user_partner_id', 'user_partner_link')

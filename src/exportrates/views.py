@@ -27,6 +27,10 @@ def xmlrts(request):
             to_element = xml.SubElement(item_element, 'to')
             to_element.text = i.pay_to.code
 
+            # тип платёжек нужен для округления
+            ltype = i.pay_from.moneytype.moneytype
+            rtype = i.pay_from.moneytype.moneytype
+
             base_money = i.pay_from.usedmoney.usedmoney
             profit_money = i.pay_to.usedmoney.usedmoney
             left = 1
@@ -36,6 +40,7 @@ def xmlrts(request):
                 right = rates.get(base=base_money, profit=profit_money).nominal_2
 
             fee = right * i.fee / 100 + i.fee_fix
+            fee = round(fee, 8 if ltype == 'crypto' else 2)
             if i.fee_min > 0:
                 fee = max(fee, i.fee_min)
             if i.fee_max > 0:
@@ -50,11 +55,6 @@ def xmlrts(request):
             amount_element = xml.SubElement(item_element, 'amount')
             amount_element.text = str(i.pay_to.reserve_for_site)
 
-            temp = i.pay_to.fee_min
-            if temp != 0:
-                minfee_element = xml.SubElement(item_element, 'minfee')
-                minfee_element.text = str(temp) + ' ' + i.pay_to.usedmoney.usedmoney
-
             # fromfee_element = xml.SubElement(item_element, 'fromfee')
             # fromfee_element.text = '330'
             #
@@ -62,13 +62,14 @@ def xmlrts(request):
             # tofee_element.text = '300'
 
             minamount_element = xml.SubElement(item_element, 'minamount')
-            minamount_element.text = str(
-                max(i.pay_from_min, left / right * i.pay_to_min)) + ' ' + i.pay_from.usedmoney.usedmoney
+            temp = max(i.pay_from_min, left / right * i.pay_to_min)
+            temp = round(temp, 8 if ltype == 'crypto' else 2)
+            minamount_element.text = str(temp) + ' ' + i.pay_from.usedmoney.usedmoney
 
             maxamount_element = xml.SubElement(item_element, 'maxamount')
-            maxamount_element.text = str(
-                min(i.pay_from_max,
-                    left / right * min(i.pay_to_max, i.pay_to.reserve))) + ' ' + i.pay_from.usedmoney.usedmoney
+            temp = min(i.pay_from_max, left / right * min(i.pay_to_max, i.pay_to.reserve))
+            temp = round(temp, 8 if ltype == 'crypto' else 2)
+            maxamount_element.text = str(temp) + ' ' + i.pay_from.usedmoney.usedmoney
 
             prm = []
             if i.manual:
@@ -110,9 +111,5 @@ def xmlrts(request):
                 if len(i.pay_to.code) >= 7 and i.pay_to.code.startswith('CASH'):
                     city_element = xml.SubElement(item_element, 'city')
                     city_element.text = i.city_change.name
-
-    # fn = os.path.join(BASE_DIR, 'templates/xmlrates.xml')
-    # tree = xml.ElementTree(root_element)
-    # tree.write(fn)
 
     return HttpResponse(xml.tostring(root_element, method='xml', encoding='utf8'), content_type='text/xml')

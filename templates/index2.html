@@ -2,20 +2,20 @@
 {% load static %}
 
 {% block description_for_page %}
-    '{{ description }}'
+    'Описание для страницы'
 {% endblock %}
 {% block keywords_for_page %}
-    '{{ keywords }}'
+    'Ключевые слова'
 {% endblock %}
 {% block title_for_page %}
-    {{ title }}
+    Меняй смело!
 {% endblock %}
-{% block tohead %}
-    <script src="{% static 'js/func.js' %}"></script>
-    <script src="{% static 'js/main.js' %}"></script>
-{% endblock %}
+
 {% block warning %}
-    {{ banner }}
+    Безопасный обмен <br>
+    Обменник полностью автоматический, работает круглосуточно. Информация о заявке отправляется на указанную
+    электронную почту. Сообщать оператору об оплате не нужно. Если считаете, что заявка зависла, попробуйте
+    просто обновить страницу - нажмите F5
 {% endblock %}
 
 {% block content %}
@@ -48,7 +48,6 @@
             Последние обмены
         </div>
         <div class="change-dn news">
-            {{ order }}
         </div>
         <div class="change-up">
             Наши партнёры
@@ -171,7 +170,7 @@
                             </div>
                             <div class="data">
                                 <input type="email" class="swap-side" name="nmmail" id="mail"
-                                       placeholder="электронная почта" maxlength="40" required value="">
+                                       placeholder="электронная почта" maxlength="50" required value="">
                             </div>
                             <div class="lock mailfree"
                                  title="Нет почты? Введите случайную. Но в этом случае уменьшаются возможности сервиса по поиску и отслеживанию вашей заявки если с ней что-то пошло не так">
@@ -183,7 +182,7 @@
                             </div>
                             <div class="data">
                                 <input type="text" class="swap-side" name="nmphone" id="phone"
-                                       placeholder="номер телефона" minlength="9" maxlength="16" required value="87659876451">
+                                       placeholder="номер телефона" maxlength="16" required value="87659876451">
                             </div>
                             <div class="lock">
                                 <div class="triangle-left nodisplay"
@@ -194,7 +193,7 @@
                         </div>
                     </div>
 
-                    <input type="button" class="swap-side btn" value="Далее" name="checkinput"
+                    <input type="button" class="swap-side btn" value="Перейти к оплате" name="checkinput"
                            id="newFormAction">
                     <div class="rules">
                         <p class="rules">нажимая кнопку - вы соглашаетесь с правилами сервиса</p>
@@ -205,4 +204,6 @@
         </div>
     </template>
 
+    <script src="{% static 'js/func.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
 {% endblock %}

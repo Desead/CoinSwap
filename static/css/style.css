@@ -140,7 +140,7 @@ header:after {
     text-align: justify;
     padding: 30px;
     margin: 15px 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.22);
 }
 
 .change {
@@ -169,7 +169,7 @@ header:after {
     margin: 0 10px;
     min-width: 250px;
     border: 1px solid #222;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.22);
 }
 
 .swap {

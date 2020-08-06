@@ -136,6 +136,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 SITE_ID = 1
 XML_RATES_SITE1 = 'xmlrates/'
+API_SITE1 = 'api/'
+ADMIN_SITE1 = 'admin/'
 
 # try:
 #     from .local_settings import *

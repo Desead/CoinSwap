@@ -2,29 +2,17 @@
 {% load static %}
 
 {% block description_for_page %}
-    'Описание для страницы'
+    '{{ description_text }}'
 {% endblock %}
 {% block keywords_for_page %}
-    'Ключевые слова'
+    '{{ keywords_text }}'
 {% endblock %}
 {% block title_for_page %}
-    Меняй смело! Подтверждение
+    {{ title_text }}
 {% endblock %}
 
 {% block warning %}
-    Проверьте данные заявки и подтвердите их корректность. <br>Стоит обратить внимание на отправляемую и получаему
-    сумму. На
-    этой странице, мы замораживаем курс
-    {% if type == 'crypto' %}
-        на {{ type_freeze }} минут для попадания заявки в сеть и на {{ type_freeze_confirm }} минут для получения 1
-        подтверждения
-    {% else %}
-        на {{ type_freeze }} минут
-    {% endif %}
-    Если за период заморозки курса заявка не будет оплачена, она автоматически отменится.
-    Если оплата по данной заявке всё же пройдёт, то обработана она будет только после обращения, в ручном режиме. Так
-    же,
-    для данной заявки, сервис оставляет за собой право произвести обмен по текущему курсу на момент её обработки.
+    {{ confirm_text }}
 {% endblock %}
 
 {% block content %}
@@ -38,18 +26,9 @@
                 <div class="orderDate" id="cnf-date" title="Используется время UTC">
                     Время оформления: {{ date_create }}
                 </div>
-                {#                <div class="orderTime" id="cnf-time">#}
-                {#                    Время оформления: 18:34:20#}
-                {#                </div>#}
                 <div class="orderStatus" id="cnf-status">
                     Статус: {{ status }}
                 </div>
-                {#                <div class="orderRate" id="cnf-rate">#}
-                {#                    Курс обмена: 1 BTC : {{ nmmail }}#}
-                {#                </div>#}
-                {#                <div class="orderInfo" id="cnf-freeze">#}
-                {#                    Период заморозки курса:#}
-                {#                </div>#}
             </div>
             <div class="cnf-right wd">
                 <div class="psFrom" id="cnf-from">
@@ -74,7 +53,6 @@
         </div>
 
         <div class="wallet-manual">
-{#            {{ manual }}#}
             {{ text }}
         </div>
 
@@ -82,10 +60,10 @@
             До отмены заявки осталось:
         </div>
         <div class="sol">
-            <form action="change/" class="solbtn" method="post">
+            <form action="./" class="solbtn" method="post">
                 {% csrf_token %}
-                <input type="submit" value="Отменить" name="solution" class="sbtn no" id="nobtn">
-                <input type="submit" value="Я оплатил" name="solution" class="sbtn ok" id="okbtn">
+                <input type="submit" value="Отменить" name="checkinput" class="sbtn no" id="nobtn">
+                <input type="submit" value="Оплатить" name="checkinput" class="sbtn ok" id="okbtn">
             </form>
         </div>
     </div>

@@ -1,4 +1,4 @@
-{% extends 'base_template.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block description_for_page %}
@@ -8,11 +8,12 @@
     'Ключевые слова'
 {% endblock %}
 {% block title_for_page %}
-    Заголовок страницы
+    Меняй смело!
 {% endblock %}
+
 {% block warning %}
-    варнинг страницы
+    Заявка {{ order_num }} отменена
 {% endblock %}
+
 {% block content %}
-    текст страницы
 {% endblock %}
